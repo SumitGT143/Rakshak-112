@@ -204,7 +204,7 @@
     if (!filtered.length) {
       queueEl.innerHTML = `
         <div style="text-align:center;padding:24px 10px;color:#64748b;font-size:0.75rem;">
-          No incidents matching "${filter}" filter.
+          ${allInc.length === 0 ? 'No active emergencies in queue. (Standby)' : `No incidents matching "${filter}" filter.`}
         </div>
       `;
       return;
@@ -726,9 +726,27 @@
     }
   };
 
+  window.resetLiveMonitoring = function() {
+    window.liveMonitoringState.incidents = [];
+    window.liveMonitoringState.selectedIncidentId = null;
+    window.liveMonitoringState.eventStreams = {};
+    window.liveMonitoringState.globalEvents = [];
+    if ($id('lmAlertContainer')) $id('lmAlertContainer').innerHTML = '';
+    window.renderLiveMonitoringQueue();
+    window.renderLiveMonitoringWorkspace();
+    if (typeof window.renderLiveMonitoringMapMarkers === 'function') {
+      window.renderLiveMonitoringMapMarkers();
+    }
+  };
+
   // 15. SSE Handler Integration
   window.onLiveMonitoringEvent = function(type, data) {
-    if (!data) return;
+    if (!data && type !== 'reset' && type !== 'incident.reset') return;
+
+    if (type === 'reset' || type === 'incident.reset') {
+      window.resetLiveMonitoring();
+      return;
+    }
 
     if (type === 'new_sos' || type === 'incident' || type === 'incident.created') {
       const incId = data.id || data.incidentId;

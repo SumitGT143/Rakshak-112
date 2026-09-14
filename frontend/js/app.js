@@ -3951,6 +3951,11 @@ async function resetAllIncidents() {
   if ($('list')) $('list').innerHTML = '<div class="empty" style="min-height:auto">No emergencies in queue.</div>';
 
   map();
+  if (typeof window.resetLiveMonitoring === 'function') {
+    window.resetLiveMonitoring();
+  } else if (typeof window.renderLiveMonitoring === 'function') {
+    window.renderLiveMonitoring();
+  }
   if (typeof window.renderLiveMonitoringUI === 'function') {
     window.renderLiveMonitoringUI();
   }
@@ -3972,8 +3977,16 @@ window.onIncidentReset = function() {
   if ($('count')) $('count').textContent = '0 CASES';
   if ($('list')) $('list').innerHTML = '<div class="empty" style="min-height:auto">No emergencies in queue.</div>';
   map();
+  if (typeof window.resetLiveMonitoring === 'function') {
+    window.resetLiveMonitoring();
+  } else if (typeof window.renderLiveMonitoring === 'function') {
+    window.renderLiveMonitoring();
+  }
   if (typeof window.renderLiveMonitoringUI === 'function') {
     window.renderLiveMonitoringUI();
+  }
+  if (typeof window.renderResponders === 'function') {
+    window.renderResponders();
   }
 };
 

@@ -154,6 +154,7 @@
             #lmQueueCol.collapsed .lm-card-header { padding: 10px 4px !important; flex-direction: column !important; gap: 8px !important; justify-content: flex-start !important; align-items: center !important; }
             #lmQueueCol.collapsed .lm-queue-title-text,
             #lmQueueCol.collapsed #lmQueueCountBadge,
+            #lmQueueCol.collapsed .lm-queue-reset-btn,
             #lmQueueCol.collapsed #lmQueueSearchContainer,
             #lmQueueCol.collapsed #lmIncidentQueue { display: none !important; }
             #lmQueueCol.collapsed .lm-queue-vertical-label { display: flex !important; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); letter-spacing: 0.08em; font-size: 0.72rem; font-weight: 800; color: #7dd3fc; margin-top: 14px; white-space: nowrap; gap: 8px; align-items: center; cursor: pointer; }
@@ -280,6 +281,9 @@
                   <span class="lm-queue-title-text">INCIDENT QUEUE</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:6px;">
+                  <button class="lm-queue-reset-btn" onclick="resetAllIncidents()" title="Reset active incidents & queue to 0" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.5);color:#fca5a5;font-size:10px;font-weight:800;padding:2px 7px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:3px;transition:all 0.2s;">
+                    🔄 Reset
+                  </button>
                   <span class="lm-badge lm-badge-info" id="lmQueueCountBadge">0 ACTIVE</span>
                   <button class="lm-queue-toggle-btn" id="btnToggleQueue" onclick="toggleIncidentQueueCollapse()" title="Minimize Incident Queue (Expand Map)">
                     <span id="lmToggleQueueArrow">◀</span>
