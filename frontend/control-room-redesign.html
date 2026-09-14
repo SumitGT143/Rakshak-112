@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rakshak 112 — Command Center</title>
+  <link rel="stylesheet" href="css/styles.css?v=20260914_2">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS & JS for high-resolution Tactical GIS Map Engine (Zero quota errors / Zero watermarks) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      RAKSHAK 112
+    </div>
+    <div style="flex:1;overflow-y:auto;padding-top:10px;">
+      <div class="nav-section">COMMAND</div>
+      <a class="nav-link tab active" data-view="incidents">📊 Dashboard (Live)</a>
+      <a class="nav-link tab" data-view="live-monitoring">🛰 Live Monitoring</a>
+      <a class="nav-link tab" data-view="responders">🚓 Responders</a>
+      <div class="nav-section">INTELLIGENCE</div>
+      <a class="nav-link tab" data-view="hospitals">🏥 Hospital Intel</a>
+      <a class="nav-link inactive">📈 Response Analytics</a>
+      <div class="nav-section">SYSTEM</div>
+      <a class="nav-link inactive">⚙️ Settings</a>
+      <a class="nav-link inactive">💬 Support</a>
+    </div>
+    <div style="padding:20px;text-align:center;font-size:10px;color:var(--border)">v2.1</div>
+  </aside>
+
+  <!-- ===== MAIN WRAPPER ===== -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <h1>COMMAND CENTER</h1>
+      <div class="topbar-right">
+        <div class="sys-health">
+          <span class="sys-live" id="sseBadge"><span class="sys-dot"></span>SSE <span id="conn">CONNECTING...</span></span>
+          <span class="sys-live" id="apiBadge"><span class="sys-dot"></span>API <span id="apiConn">CONNECTING...</span></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- ======== INCIDENTS VIEW ======== -->
+      <section class="view active" id="incidents">
+        <div class="dashboard-grid">
+
+          <!-- KPI strip -->
+          <div class="stats-strip">
+            <div class="kpi">
+              <div class="kpi-label">TOTAL ACTIVE</div>
+              <div class="kpi-val" id="total">0</div>
+              <div class="kpi-sub">ACTIVE CASES</div>
+            </div>
+            <div class="kpi danger">
+              <div class="kpi-label">CRITICAL</div>
+              <div class="kpi-val" id="critical">0</div>
+              <div class="kpi-sub">REQUIRES ATTENTION</div>
+            </div>
+            <div class="kpi warning">
+              <div class="kpi-label">ACTIVE RESPONSE</div>
+              <div class="kpi-val" id="active">0</div>
+              <div class="kpi-sub">UNITS DEPLOYED</div>
+            </div>
+            <div class="kpi success">
+              <div class="kpi-label">LAST INCIDENT</div>
+              <div class="kpi-val" id="last" style="font-size:32px;margin-top:8px;text-transform:uppercase">—</div>
+              <div class="kpi-sub">LATEST REPORT</div>
+            </div>
+          </div>
+
+          <!-- Map -->
+          <div class="card map-container">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <h2>LIVE INCIDENT MAP</h2>
+                <span class="card-label" id="mapProviderBadge">GOOGLE MAPS GIS</span>
+              </div>
+              <div class="map-controls" style="display:flex;gap:6px;align-items:center;">
+                <button class="map-ctrl-btn active" id="btnMapStyleRoad" onclick="setDashboardMapType('roadmap', this)">Road</button>
+                <button class="map-ctrl-btn" id="btnMapStyleSat" onclick="setDashboardMapType('hybrid', this)">Satellite</button>
+                <button class="map-ctrl-btn" title="Center Durg-Bhilai Sector" onclick="recenterDashboardMap()">🎯 Recenter</button>
+              </div>
+            </div>
+            <div class="map" id="map" style="position:relative;width:100%;height:100%;min-height:420px;border-radius:0 0 8px 8px;">
+              <div class="map-grid-lines" id="mapGridOverlay"></div>
+              <div class="empty" id="mapEmpty" style="position:relative;z-index:2;display:none;">Waiting for emergency telemetry…</div>
+            </div>
+          </div>
+
+          <!-- Incident queue -->
+          <div class="card queue-panel">
+            <div class="card-header">
+              <h2>INCIDENT QUEUE</h2>
+              <span class="card-label" id="count">0 CASES</span>
+            </div>
+            <div class="queue-list" id="list"></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======== LIVE MONITORING VIEW ======== -->
+      <section class="view" id="live-monitoring">
+        <div id="live-monitoring-page">
+          <style>
+            #live-monitoring-page { background: #07132a; color: #e6f0fa; font-family: 'Inter', system-ui, sans-serif; }
+            #live-monitoring-page .lm-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #0a1428; border-bottom: 1px solid #163660; flex-wrap: wrap; gap: 10px; }
+            #live-monitoring-page .lm-title { font-weight: 900; font-size: 1.05rem; letter-spacing: .08em; color: #38bdf8; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+            #live-monitoring-page .lm-badge { padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+            #live-monitoring-page .lm-badge-ok { background: #064e3b; border: 1px solid #10b981; color: #a7f3d0; }
+            #live-monitoring-page .lm-badge-info { background: #0f2648; border: 1px solid #0284c7; color: #7dd3fc; }
+            
+            /* Dynamic Alert Banners */
+            #live-monitoring-page .lm-alert-banner { margin: 12px 20px 0; padding: 10px 16px; border-radius: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
+            #live-monitoring-page .lm-alert-conflict { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; }
+            #live-monitoring-page .lm-alert-reassign { background: #4c0519; border: 1px solid #f43f5e; color: #fecdd3; }
+            #live-monitoring-page .lm-alert-anomaly { background: #3b0764; border: 1px solid #a855f7; color: #e9d5ff; }
+            #live-monitoring-page .lm-alert-critical-incoming { background: linear-gradient(90deg, #450a0a, #7f1d1d); border: 1px solid #ef4444; color: #fee2e2; box-shadow: 0 0 16px rgba(239, 68, 68, 0.35); }
+
+            /* 3-Column Master Workspace Grid & Minimization */
+            #live-monitoring-page .lm-workspace-grid { display: grid; grid-template-columns: 280px 1.3fr 1.15fr; gap: 14px; padding: 12px 18px; align-items: stretch; transition: grid-template-columns 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+            #live-monitoring-page .lm-workspace-grid.queue-collapsed { grid-template-columns: 46px 1.65fr 1.15fr; }
+            @media(max-width: 1400px) {
+              #live-monitoring-page .lm-workspace-grid { grid-template-columns: 250px 1.2fr 1fr; gap: 12px; }
+              #live-monitoring-page .lm-workspace-grid.queue-collapsed { grid-template-columns: 46px 1.55fr 1fr; }
+            }
+            @media(max-width: 1100px) { #live-monitoring-page .lm-workspace-grid { grid-template-columns: 1fr; } }
+
+            /* Queue Minimize / Expand Arrow Button */
+            .lm-queue-toggle-btn { background: #0c1836; border: 1px solid #1e3a6a; color: #38bdf8; border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.65rem; transition: all 0.15s ease; padding: 0; }
+            .lm-queue-toggle-btn:hover { background: #0284c7; border-color: #38bdf8; color: #ffffff; box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); transform: scale(1.05); }
+
+            /* Collapsed State for #lmQueueCol */
+            #lmQueueCol.collapsed { width: 46px !important; min-width: 46px !important; padding: 0 !important; overflow: hidden !important; }
+            #lmQueueCol.collapsed .lm-card-header { padding: 10px 4px !important; flex-direction: column !important; gap: 8px !important; justify-content: flex-start !important; align-items: center !important; }
+            #lmQueueCol.collapsed .lm-queue-title-text,
+            #lmQueueCol.collapsed #lmQueueCountBadge,
+            #lmQueueCol.collapsed #lmQueueSearchContainer,
+            #lmQueueCol.collapsed #lmIncidentQueue { display: none !important; }
+            #lmQueueCol.collapsed .lm-queue-vertical-label { display: flex !important; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); letter-spacing: 0.08em; font-size: 0.72rem; font-weight: 800; color: #7dd3fc; margin-top: 14px; white-space: nowrap; gap: 8px; align-items: center; cursor: pointer; }
+            .lm-queue-vertical-label { display: none; }
+            
+            /* Incident Queue Card & Filter Pills */
+            .lm-filter-pills { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; }
+            .lm-pill { background: #0c1836; border: 1px solid #1e3a6a; color: #94a3b8; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+            .lm-pill:hover { background: #132754; color: #e2e8f0; }
+            .lm-pill.active { background: #0284c7; border-color: #38bdf8; color: #ffffff; box-shadow: 0 0 8px rgba(56, 189, 248, 0.4); }
+
+            .lm-queue-card { background: #081124; border: 1px solid #162f55; border-radius: 8px; padding: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+            .lm-queue-card:hover { background: #0c1836; border-color: #38bdf8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+            .lm-queue-card.selected { background: #0d1e44; border: 2px solid #38bdf8 !important; box-shadow: 0 0 16px rgba(56, 189, 248, 0.35); }
+            .lm-queue-card.is-crit { border-left: 4px solid #ef4444; }
+            .lm-queue-card.is-high { border-left: 4px solid #f97316; }
+            .lm-queue-card.is-mod { border-left: 4px solid #eab308; }
+            .lm-queue-card.is-res { border-left: 4px solid #22c55e; }
+
+            /* Cards Base & Spacing */
+            #live-monitoring-page .lm-card { background: #0b152d; border: 2px solid #1a3c6c; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s ease; box-shadow: 0 4px 18px rgba(0,0,0,0.4); }
+            #live-monitoring-page .lm-card-header { padding: 10px 14px; background: #081124; border-bottom: 2px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; font-weight: 800; color: #93c5fd; letter-spacing: 0.05em; text-transform: uppercase; }
+            #live-monitoring-page .lm-card-body { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+            /* Card Styling Colors with Defined 2px Borders */
+            .lm-card-emergency { border: 2px solid rgba(239, 68, 68, 0.75) !important; background: linear-gradient(180deg, rgba(239,68,68,0.08) 0%, #0b152d 35%) !important; box-shadow: 0 0 16px rgba(239, 68, 68, 0.16); }
+            .lm-card-emergency .lm-card-header { border-bottom: 2px solid rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.14); }
+
+            .lm-card-ambulance { border: 2px solid rgba(56, 189, 248, 0.75) !important; background: linear-gradient(180deg, rgba(56,189,248,0.08) 0%, #0b152d 35%) !important; box-shadow: 0 0 16px rgba(56, 189, 248, 0.16); }
+            .lm-card-ambulance .lm-card-header { border-bottom: 2px solid rgba(56, 189, 248, 0.45); background: rgba(56, 189, 248, 0.14); }
+
+            .lm-card-hospital { border: 2px solid rgba(34, 197, 94, 0.75) !important; background: linear-gradient(180deg, rgba(34,197,94,0.08) 0%, #0b152d 35%) !important; box-shadow: 0 0 16px rgba(34, 197, 94, 0.16); }
+            .lm-card-hospital .lm-card-header { border-bottom: 2px solid rgba(34, 197, 94, 0.45); background: rgba(34, 197, 94, 0.14); }
+
+            .lm-card-timeline { border: 2px solid rgba(251, 191, 36, 0.75) !important; background: linear-gradient(180deg, rgba(251,191,36,0.08) 0%, #0b152d 35%) !important; box-shadow: 0 0 16px rgba(251, 191, 36, 0.16); }
+            .lm-card-timeline .lm-card-header { border-bottom: 2px solid rgba(251, 191, 36, 0.45); background: rgba(251, 191, 36, 0.14); }
+
+            .lm-card-updates { border: 2px solid rgba(168, 85, 247, 0.75) !important; background: linear-gradient(180deg, rgba(168,85,247,0.08) 0%, #0b152d 35%) !important; box-shadow: 0 0 16px rgba(168, 85, 247, 0.16); }
+            .lm-card-updates .lm-card-header { border-bottom: 2px solid rgba(168, 85, 247, 0.45); background: rgba(168, 85, 247, 0.14); }
+
+            /* Accordion / Expandable Buttons */
+            .lm-expand-btn { background: rgba(15, 23, 42, 0.7); border: 1.5px solid #1e3a6a; border-radius: 6px; color: #93c5fd; font-size: 0.72rem; font-weight: 700; padding: 6px 10px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; width: 100%; transition: all 0.15s ease; margin-top: 6px; }
+            .lm-expand-btn:hover { background: rgba(56,189,248,0.15); border-color: #38bdf8; color: #ffffff; }
+            .lm-expand-content { display: none; margin-top: 8px; padding: 10px 12px; background: rgba(4,9,20,0.8); border: 1.5px solid #162f55; border-radius: 6px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.35); }
+            .lm-expand-content.open { display: block; animation: lmFadeSlide 0.2s ease-out; }
+            @keyframes lmFadeSlide { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+            /* Stepped Response Timeline (High Scannability) */
+            .lm-stepped-timeline { position: relative; }
+            .lm-step-item { display: flex; align-items: center; gap: 8px; position: relative; padding: 4px 6px; border-radius: 4px; transition: background 0.15s; }
+            .lm-step-item.completed { opacity: 0.8; color: #cbd5e1; }
+            .lm-step-item.active { background: rgba(56, 189, 248, 0.14); border: 1.5px solid rgba(56, 189, 248, 0.55); border-radius: 6px; padding: 6px 10px; opacity: 1; margin: 4px 0; color: #38bdf8; }
+            .lm-step-item.pending { opacity: 0.5; color: #64748b; }
+
+            /* Dominant Clean Metric Display Boxes */
+            .display-hero-box { background: linear-gradient(135deg, rgba(2, 132, 199, 0.18) 0%, rgba(11, 21, 45, 0.7) 100%); border: 2px solid rgba(56, 189, 248, 0.6); border-radius: 8px; padding: 7px 12px; display: flex; align-items: center; justify-content: space-between; margin: 4px 0; }
+            .display-hero-lbl { font-size: 0.75rem; font-weight: 800; color: #7dd3fc; letter-spacing: 0.05em; }
+            .display-hero-val { font-size: 1.45rem; font-weight: 900; color: #38bdf8; letter-spacing: 0.02em; font-family: 'Inter', system-ui, sans-serif; }
+
+            .display-hero-box-green { background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(11, 21, 45, 0.7) 100%); border: 2px solid rgba(34, 197, 94, 0.6); border-radius: 8px; padding: 7px 12px; display: flex; align-items: center; justify-content: space-between; margin: 4px 0; }
+            .display-hero-lbl-green { font-size: 0.75rem; font-weight: 800; color: #86efac; letter-spacing: 0.05em; }
+            .display-hero-val-green { font-size: 1.45rem; font-weight: 900; color: #4ade80; letter-spacing: 0.02em; font-family: 'Inter', system-ui, sans-serif; }
+
+            /* Bed stat pills */
+            .bed-stat-pill { padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 0.72rem; }
+            .bed-stat-icu { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); color: #bae6fd; }
+            .bed-stat-er { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.35); color: #bbf7d0; }
+
+            /* Medical Requirements Chips */
+            #live-monitoring-page .med-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; margin: 2px 3px 2px 0; }
+            #live-monitoring-page .med-chip.req { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; }
+            #live-monitoring-page .med-chip.verified { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #a7f3d0; }
+            #live-monitoring-page .med-chip.off { background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; color: #64748b; }
+
+            /* Bed Stat Badges */
+            .bed-stat-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; }
+            .bed-stat-icu { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); color: #7dd3fc; }
+            .bed-stat-er { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.35); color: #86efac; }
+
+            /* Compact Timeline Events */
+            .lm-event-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.7rem; }
+            .lm-event-row:last-child { border-bottom: none; }
+            .lm-event-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+            .lm-event-dot.dot-sos { background: #facc15; box-shadow: 0 0 5px #facc15; }
+            .lm-event-dot.dot-crit { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
+            .lm-event-dot.dot-disp { background: #38bdf8; box-shadow: 0 0 5px #38bdf8; }
+            .lm-event-dot.dot-hosp { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+            .lm-event-dot.dot-route { background: #06b6d4; box-shadow: 0 0 5px #06b6d4; }
+            .lm-event-dot.dot-eta { background: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
+
+            /* Resource Status in Middle Grid */
+            #live-monitoring-page .lm-mid-grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 0 18px 14px; }
+            #live-monitoring-page .res-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #07132a; border: 1px solid #163660; border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem; }
+            #live-monitoring-page .res-val-group { display: flex; gap: 8px; font-weight: 800; font-size: 0.82rem; }
+            #live-monitoring-page .res-tag-avail { color: #4ade80; }
+            #live-monitoring-page .res-tag-occ { color: #94a3b8; }
+            #live-monitoring-page .res-tag-res { color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 1px 6px; border-radius: 3px; border: 1px solid rgba(245, 158, 11, 0.3); }
+          </style>
+
+          <!-- Topbar -->
+          <div class="lm-header">
+            <div>
+              <div class="lm-title"><span>🛡️</span> RAKSHAK 112 — COMMAND CENTER LIVE MONITORING</div>
+              <div style="color:#7e92b2;font-size:0.75rem;margin-top:2px;">Dynamic Dispatch Console · Optimal TTAC Engine · Atomic Resource Locks</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span class="lm-badge lm-badge-ok" id="lmSseStatus">● SSE CONNECTED</span>
+              <span class="lm-badge lm-badge-info" id="lmApiStatus">● API LIVE</span>
+              <span style="font-size:0.75rem;color:#94a3b8;font-family:monospace;" id="lmClock">--:--:--</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Alert / New Critical SOS Notification Banner Slot -->
+          <div id="lmAlertContainer"></div>
+
+          <!-- MASTER 3-COLUMN WORKSPACE GRID: Queue | Map | Selected Incident Workspace -->
+          <div class="lm-workspace-grid">
+            
+            <!-- 1. LEFT COLUMN: INCIDENT QUEUE (~280px or 46px when minimized) -->
+            <div class="lm-card" id="lmQueueCol" style="display:flex;flex-direction:column;max-height:860px;position:relative;">
+              <div class="lm-card-header" style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="display:flex;align-items:center;gap:6px;" class="lm-queue-title-wrap">
+                  <span>🚨</span>
+                  <span class="lm-queue-title-text">INCIDENT QUEUE</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="lm-badge lm-badge-info" id="lmQueueCountBadge">0 ACTIVE</span>
+                  <button class="lm-queue-toggle-btn" id="btnToggleQueue" onclick="toggleIncidentQueueCollapse()" title="Minimize Incident Queue (Expand Map)">
+                    <span id="lmToggleQueueArrow">◀</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Vertical compact indicator when minimized -->
+              <div class="lm-queue-vertical-label" onclick="toggleIncidentQueueCollapse()" title="Click to expand Incident Queue">
+                <span>INCIDENT QUEUE</span>
+                <span id="lmQueueCountBadgeMin" style="background:#0284c7;color:#fff;padding:2px 5px;border-radius:3px;font-size:0.65rem;transform:rotate(90deg);">0</span>
+              </div>
+              
+              <!-- Search & Filter Controls -->
+              <div id="lmQueueSearchContainer" style="padding:8px 10px;border-bottom:1px solid #163660;background:#091226;display:flex;flex-direction:column;gap:6px;">
+                <input type="text" id="lmQueueSearchInput" placeholder="🔍 Search ID, Type, Location..." 
+                  oninput="onMonitoringQueueSearch(this.value)"
+                  style="width:100%;padding:5px 8px;background:#040914;border:1px solid #1e3a6a;border-radius:4px;color:#e2e8f0;font-size:0.75rem;outline:none;" />
+                <div class="lm-filter-pills">
+                  <button class="lm-pill active" onclick="setMonitoringQueueFilter('ALL', this)">ALL</button>
+                  <button class="lm-pill" onclick="setMonitoringQueueFilter('CRITICAL', this)">🔴 CRITICAL</button>
+                  <button class="lm-pill" onclick="setMonitoringQueueFilter('ACTIVE', this)">🟠 ACTIVE</button>
+                  <button class="lm-pill" onclick="setMonitoringQueueFilter('RESOLVED', this)">🟢 RESOLVED</button>
+                </div>
+              </div>
+
+              <!-- Scrollable Incident Queue List Container -->
+              <div class="lm-queue-list" id="lmIncidentQueue" style="flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px;">
+                <!-- Populated dynamically via renderLiveMonitoringQueue() -->
+              </div>
+            </div>
+
+            <!-- 2. CENTER COLUMN: LIVE FIELD MAP (~1.3fr) -->
+            <div class="lm-card" id="lmMapCol" style="display:flex;flex-direction:column;max-height:860px;">
+              <div class="lm-card-header">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span>🛰️ LIVE FIELD MAP</span>
+                  <span class="lm-badge lm-badge-info" id="liveMapBadge">STREET GIS</span>
+                </div>
+                <div style="display:flex;gap:4px;">
+                  <button class="map-ctrl-btn active" id="btnLiveMapRoad" onclick="setLiveMapType('roadmap', this)">Road</button>
+                  <button class="map-ctrl-btn" id="btnLiveMapSat" onclick="setLiveMapType('hybrid', this)">Sat</button>
+                  <button class="map-ctrl-btn" onclick="recenterLiveMap()">🎯 Recenter</button>
+                </div>
+              </div>
+              <div class="lm-map-body" id="liveMap" style="flex:1;min-height:540px;position:relative;">
+                <div class="map-legend">
+                  <span>🚨 Patient SOS</span>
+                  <span>🚑 Assigned Ambulance</span>
+                  <span>🏥 Selected Hospital</span>
+                  <span>🟢 Green Corridor Route</span>
+                </div>
+              </div>
+              <!-- Mini Telemetry Strip under Map -->
+              <div style="padding:6px 12px;background:#091226;border-top:1px solid #163660;font-size:0.72rem;color:#7e92b2;display:flex;justify-content:space-between;align-items:center;">
+                <span id="lmMapFocusLabel">🎯 Map Focus: Autonomous Tracking</span>
+                <span id="lmMapGpsAccuracy">GPS Accuracy: ±12m (RTK-grade)</span>
+              </div>
+            </div>
+
+            <!-- 3. RIGHT COLUMN: SELECTED INCIDENT WORKSPACE / STANDBY DASHBOARD (~1.15fr) -->
+            <div id="lmDetailsCol" style="max-height:860px;display:flex;flex-direction:column;">
+              
+              <!-- STANDBY DASHBOARD (VISIBLE WHEN selectedIncidentId == null) -->
+              <div id="lmStandbyDashboard" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;height:100%;min-height:580px;background:#0e1530;border:1px solid #163660;border-radius:10px;padding:24px;position:relative;overflow:hidden;">
+                <div class="standby-pulse">📡</div>
+                <h3 style="color:#38bdf8;font-size:1.15rem;font-weight:900;margin-bottom:6px;letter-spacing:0.04em;">🛡️ CONTROL CENTER READY</h3>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;">
+                  <span class="lm-badge lm-badge-ok">● System Operational</span>
+                  <span class="lm-badge lm-badge-info">● GPS Stream Connected</span>
+                  <span class="lm-badge lm-badge-ok">● Dispatch Engine Online</span>
+                </div>
+
+                <!-- Live Metrics Summary Card -->
+                <div style="background:rgba(15,23,42,0.85);border:1px solid #163660;border-radius:8px;padding:14px;width:100%;max-width:320px;text-align:left;margin-bottom:16px;">
+                  <div style="font-size:0.72rem;color:#7e92b2;font-weight:800;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid #1e3a6a;padding-bottom:4px;">
+                    Active Emergencies Breakdown
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:0.8rem;">
+                    <span style="color:#cbd5e1;font-weight:700;">TOTAL ACTIVE:</span>
+                    <span style="color:#38bdf8;font-weight:900;" id="sbCountTotal">0</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:0.78rem;">
+                    <span style="color:#fca5a5;">🔴 Critical (L1):</span>
+                    <span style="color:#ef4444;font-weight:800;" id="sbCountCrit">0</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:0.78rem;">
+                    <span style="color:#fed7aa;">🟠 High (L2):</span>
+                    <span style="color:#f97316;font-weight:800;" id="sbCountHigh">0</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;">
+                    <span style="color:#fef08a;">🟡 Moderate (L3):</span>
+                    <span style="color:#eab308;font-weight:800;" id="sbCountMod">0</span>
+                  </div>
+                </div>
+
+                <p style="color:#94a3b8;font-size:0.82rem;max-width:280px;line-height:1.5;margin-bottom:16px;">
+                  Select an incident from the queue on the left to begin detailed live monitoring.
+                </p>
+
+                <button class="btn-automatch" style="max-width:320px;" onclick="triggerSimulateSelectSOS()">
+                  <span>⚡</span><span>SIMULATE / FOCUS ACTIVE SOS</span>
+                </button>
+              </div>
+
+              <!-- ACTIVE SELECTED INCIDENT WORKSPACE (VISIBLE WHEN selectedIncidentId != null) -->
+              <div id="lmActiveWorkspace" style="display:none;flex-direction:column;gap:14px;overflow-y:auto;padding-right:6px;padding-bottom:18px;max-height:860px;">
+                
+                <!-- 1. INCIDENT DETAILS & VICTIM ASSESSMENT -->
+                <div class="lm-card lm-card-emergency" id="cardIncidentDetails">
+                  <div class="lm-card-header">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span style="color:#ef4444;">🚨</span>
+                      <span style="font-weight:900;letter-spacing:0.04em;color:#fca5a5;">INCIDENT:</span>
+                      <span id="lmDetailId" style="letter-spacing:0.04em;color:#ffffff;font-weight:900;">INC-204</span>
+                    </div>
+                    <div style="display:flex;gap:4px;align-items:center;">
+                      <span id="lmDetailSeverityBadge" class="badge badge-critical">CRITICAL · L1</span>
+                      <span id="lmDetailStatusBadge" class="badge" style="background:#1e293b;border:1px solid #475569;color:#94a3b8;font-size:0.65rem;">REPORTED</span>
+                    </div>
+                  </div>
+                  <div class="lm-card-body" style="gap:4px;">
+                    <!-- Primary Scannable Row -->
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                      <div style="font-weight:900;font-size:0.9rem;color:#ffffff;" id="lmDetailType">Road Traffic Accident</div>
+                      <span style="font-size:0.75rem;color:#fca5a5;font-weight:800;" id="lmDetailVitals">2 casualties</span>
+                    </div>
+                    
+                    <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#cbd5e1;margin-top:1px;">
+                      <span id="lmDetailLocation">📍 Supela Chowk, Bhilai</span>
+                      <span style="color:#7e92b2;font-family:monospace;" id="lmDetailTime">07:34 PM</span>
+                    </div>
+
+                    <!-- Quick Assessment Chips Row -->
+                    <div id="lmDetailAssessmentChips" style="display:flex;flex-wrap:wrap;gap:3px;margin-top:2px;"></div>
+
+                    <!-- Expandable Full Incident & Assessment Details (Progressive Disclosure) -->
+                    <button class="lm-expand-btn" onclick="toggleLmAccordion('lmDetailExtraContent', this)">
+                      <span>▾ View Incident &amp; Triage Details</span>
+                      <span style="font-size:0.65rem;">EXPAND</span>
+                    </button>
+                    <div class="lm-expand-content" id="lmDetailExtraContent">
+                      <div id="lmDetailAssessmentContent" style="display:flex;flex-direction:column;gap:3px;font-size:0.7rem;color:#cbd5e1;margin-bottom:6px;">
+                        <!-- Full 5 questions rendered here -->
+                      </div>
+                      <div style="font-size:0.68rem;color:#7e92b2;margin-bottom:4px;" id="lmDetailCoords">
+                        <!-- Precise GPS coords -->
+                      </div>
+                      <div id="lmDetailReqChips" style="display:flex;flex-wrap:wrap;gap:2px;">
+                        <!-- Medical requirement chips -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. AMBULANCE TRACKING & SMART ASSIGNMENT -->
+                <div class="lm-card lm-card-ambulance" id="cardAmbulanceTracking">
+                  <div class="lm-card-header">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span style="color:#38bdf8;">🚑</span>
+                      <span style="font-weight:900;letter-spacing:0.04em;color:#7dd3fc;">AMBULANCE:</span>
+                      <span id="lmAmbUnit" style="letter-spacing:0.04em;color:#ffffff;font-weight:900;">AMB-108-10</span>
+                    </div>
+                    <span id="lmAmbStatusBadge" class="badge" style="background:#0369a1;color:#bae6fd;border:1px solid #38bdf8;font-size:0.65rem;">EN ROUTE</span>
+                  </div>
+                  <div class="lm-card-body" style="gap:4px;">
+                    <!-- Driver & Distance Scannable Row -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;">
+                      <span style="color:#ffffff;font-weight:800;" id="lmAmbDriver">Santosh Nishad</span>
+                      <span style="color:#38bdf8;font-weight:800;" id="lmAmbDistance">3.85 km</span>
+                    </div>
+
+                    <!-- Dominant Clean ETA Hero Box -->
+                    <div class="display-hero-box">
+                      <span class="display-hero-lbl">ETA</span>
+                      <span class="display-hero-val" id="lmAmbEta">6 min</span>
+                    </div>
+
+                    <!-- Quick Telemetry Specs Line -->
+                    <div style="font-size:0.68rem;color:#94a3b8;display:flex;justify-content:space-between;align-items:center;">
+                      <span id="lmAmbEquip">ALS • Ventilator Ready</span>
+                      <span style="color:#38bdf8;font-weight:700;" id="lmAmbGps">GPS LIVE • 48 km/h</span>
+                    </div>
+
+                    <!-- Expandable 🧠 Why this ambulance? (Progressive Disclosure) -->
+                    <button class="lm-expand-btn" onclick="toggleLmAccordion('lmAmbWhyContent', this)">
+                      <span>🧠 Why this ambulance?</span>
+                      <span style="font-size:0.65rem;">DETAILS</span>
+                    </button>
+                    <div class="lm-expand-content" id="lmAmbWhyContent" style="font-size:0.7rem;color:#bae6fd;">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. HOSPITAL STATUS & SMART ASSIGNMENT -->
+                <div class="lm-card lm-card-hospital" id="cardHospitalStatus">
+                  <div class="lm-card-header">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span style="color:#22c55e;">🏥</span>
+                      <span style="font-weight:900;letter-spacing:0.04em;color:#86efac;">HOSPITAL:</span>
+                      <span id="lmHospName" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;color:#ffffff;font-weight:900;">SHRI SHANKARACHARYA</span>
+                    </div>
+                    <span id="lmHospPreAlertBadge" class="badge" style="background:#064e3b;color:#a7f3d0;border:1px solid #10b981;font-size:0.65rem;">PRE-ALERT</span>
+                  </div>
+                  <div class="lm-card-body" style="gap:4px;">
+                    <!-- Dominant Clean TTAC Hero Box -->
+                    <div class="display-hero-box-green">
+                      <span class="display-hero-lbl-green">TTAC</span>
+                      <span class="display-hero-val-green" id="lmHospTtac">18 min</span>
+                    </div>
+
+                    <!-- Bed Stats & Capacity Row -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;margin:1px 0;">
+                      <div style="display:flex;gap:4px;">
+                        <span class="bed-stat-pill bed-stat-icu" id="lmHospIcu">ICU 4 FREE</span>
+                        <span class="bed-stat-pill bed-stat-er" id="lmHospEr">ER 6 FREE</span>
+                      </div>
+                      <span style="color:#4ade80;font-weight:800;" id="lmHospCapacity">Capacity 72%</span>
+                    </div>
+
+                    <div style="font-size:0.68rem;color:#86efac;margin-top:1px;" id="lmHospAlertInfo">
+                      ✓ Pre-alert transmitted &nbsp;•&nbsp; ✓ ICU locked
+                    </div>
+
+                    <!-- Expandable 🧠 Why this hospital? (Progressive Disclosure) -->
+                    <button class="lm-expand-btn" onclick="toggleLmAccordion('lmHospWhyContent', this)">
+                      <span>🧠 Why this hospital?</span>
+                      <span style="font-size:0.65rem;">DETAILS</span>
+                    </button>
+                    <div class="lm-expand-content" id="lmHospWhyContent" style="font-size:0.7rem;color:#bbf7d0;">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. EMERGENCY RESPONSE TIMELINE (HIGH SCANNABILITY) -->
+                <div class="lm-card lm-card-timeline" id="cardResponseTimeline">
+                  <div class="lm-card-header">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span style="color:#fbbf24;">⏱️</span>
+                      <span>RESPONSE TIMELINE</span>
+                    </div>
+                    <span id="lmTimelineStageBadge" class="badge" style="background:#451a03;color:#fde68a;border:1px solid #d97706;font-size:0.65rem;">PROGRESSION</span>
+                  </div>
+                  <div class="lm-card-body" style="padding:6px 10px;">
+                    <div id="lmTimelineSteppedList" class="lm-stepped-timeline" style="display:flex;flex-direction:column;gap:2px;">
+                      <!-- Rendered dynamically -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. REAL-TIME UPDATES (COMPACT STREAM) -->
+                <div class="lm-card lm-card-updates" id="cardRealtimeUpdates">
+                  <div class="lm-card-header">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span style="color:#c084fc;">🔔</span>
+                      <span>REAL-TIME UPDATES</span>
+                    </div>
+                    <span class="badge" style="background:#3b0764;color:#e9d5ff;border:1px solid #a855f7;font-size:0.65rem;">LIVE STREAM</span>
+                  </div>
+                  <div class="lm-card-body" style="padding:6px 10px;">
+                    <div id="lmCard4Timeline" style="overflow-y:auto;max-height:130px;display:flex;flex-direction:column;gap:2px;">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- MIDDLE GRID: RESOURCE STATUS -->
+          <div class="lm-mid-grid">
+            
+            <!-- RESOURCE STATUS -->
+            <div class="lm-card">
+              <div class="lm-card-header">
+                <span>📊 LIVE RESOURCE STATUS (ATOMIC RESERVATIONS)</span>
+                <span style="font-size:0.7rem;color:#86efac;">● REAL-TIME LOCKS</span>
+              </div>
+              <div class="lm-card-body">
+                <div class="res-row">
+                  <div><b>ICU BEDS</b> <small style="color:#7e92b2;">(Raipur + Durg)</small></div>
+                  <div class="res-val-group">
+                    <span class="res-tag-avail" id="resIcuAvail">-- Free</span>
+                    <span class="res-tag-occ" id="resIcuOcc">-- Occupied</span>
+                    <span class="res-tag-res" id="resIcuRes">-- Reserved</span>
+                  </div>
+                </div>
+                <div class="res-row">
+                  <div><b>ER TRAUMA BEDS</b> <small style="color:#7e92b2;">(Emergency Bays)</small></div>
+                  <div class="res-val-group">
+                    <span class="res-tag-avail" id="resErAvail">-- Free</span>
+                    <span class="res-tag-occ" id="resErOcc">-- Occupied</span>
+                    <span class="res-tag-res" id="resErRes">-- Reserved</span>
+                  </div>
+                </div>
+                <div class="res-row">
+                  <div><b>AMBULANCE FLEET</b> <small style="color:#7e92b2;">(ALS / BLS)</small></div>
+                  <div class="res-val-group">
+                    <span class="res-tag-avail" id="resAmbAvail">-- Available</span>
+                    <span class="res-tag-occ" id="resAmbDispatched">-- Dispatched</span>
+                    <span class="res-tag-res" id="resAmbBusy">-- Busy</span>
+                  </div>
+                </div>
+                <div style="font-size:0.72rem;color:#7e92b2;margin-top:6px;">
+                  🔒 <i>Atomic Guarantee: Reserved ICU beds are locked immediately to prevent simultaneous SOS collisions.</i>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Status Strip -->
+          <div style="padding:10px 20px 20px;color:#7e92b2;font-size:0.75rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>Rakshak 112 Dynamic Dispatch Engine v2.5 · Endpoints: /api/incidents /api/sos /api/events /api/resources/status</span>
+            <span>Zero-hardcoding GPS &amp; Clinical Routing active</span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======== HOSPITALS VIEW ======== -->
+      <section class="view" id="hospitals">
+        <div class="hosp-intel-header">
+          <div class="hosp-title-group">
+            <div class="hosp-header-icon">🏥</div>
+            <div>
+              <h2 class="hosp-main-title">HOSPITAL INTEL &amp; CAPABILITY DATABASE</h2>
+              <p class="hosp-main-sub">Raipur Metropolitan &amp; Durg-Bhilai Sectors · Real-time Bed Capacity, Clinical Triage &amp; AI Routing</p>
+            </div>
+          </div>
+          <div class="hosp-summary-strip">
+            <div class="summary-stat">
+              <span class="stat-num" id="summaryTotal">0</span>
+              <span class="stat-lbl">Total</span>
+            </div>
+            <div class="summary-stat accepting">
+              <span class="stat-num" id="summaryAccepting">0</span>
+              <span class="stat-lbl">Accepting</span>
+            </div>
+            <div class="summary-stat limited">
+              <span class="stat-num" id="summaryLimited">0</span>
+              <span class="stat-lbl">Limited</span>
+            </div>
+            <div class="summary-stat diverted">
+              <span class="stat-num" id="summaryDiverted">0</span>
+              <span class="stat-lbl">Diverted</span>
+            </div>
+            <div class="summary-stat unknown">
+              <span class="stat-num" id="summaryUnknown">0</span>
+              <span class="stat-lbl">Unknown</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="hosp-toolbar">
+          <div class="hosp-search-wrapper">
+            <input type="text" id="hospSearch" placeholder="Search by hospital name, specialty, address…">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <div class="custom-select-wrapper">
+              <select id="filterDistrict" class="hosp-select">
+                <option value="">All Sectors (Raipur &amp; Durg-Bhilai)</option>
+                <option value="Raipur">Raipur District (Capital Region)</option>
+                <option value="Durg">Durg District</option>
+                <option value="Bhilai">Bhilai Sector</option>
+                <option value="Tatibandh">Tatibandh / AIIMS</option>
+                <option value="Civil Lines">Civil Lines / Mekahara</option>
+                <option value="Pachpedi Naka">Pachpedi Naka / NH-43</option>
+                <option value="Devendra Nagar">Devendra Nagar</option>
+                <option value="Naya Raipur">Naya Raipur / Atal Nagar</option>
+                <option value="Mowa">Mowa / Pandri</option>
+                <option value="Supela">Supela / Bhilai</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterType" class="hosp-select">
+                <option value="">All Types</option>
+                <option value="Government">Government / District</option>
+                <option value="Private">Private / Multispecialty</option>
+                <option value="Trust">Trust / Non-Profit</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterTrauma" class="hosp-select">
+                <option value="">Trauma Level: All</option>
+                <option value="1">Level 1 Trauma Only</option>
+                <option value="any">Any Trauma Care</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterICU" class="hosp-select">
+                <option value="">ICU: Any</option>
+                <option value="avail">ICU Beds Available &gt; 0</option>
+                <option value="yes">Has ICU Unit</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterMore" class="hosp-select">
+                <option value="">Clinical: All</option>
+                <option value="ot">Operation Theatre Ready</option>
+                <option value="vent">Ventilators Available</option>
+                <option value="blood">Blood Bank On-Site</option>
+                <option value="burn">Burn Unit</option>
+                <option value="neuro">Neurosurgery</option>
+                <option value="ortho">Orthopedics</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterSort" class="hosp-select">
+                <option value="nearest">Sort: Nearest (Distance)</option>
+                <option value="score">Sort: AI Priority Score</option>
+                <option value="icu">Sort: ICU Beds Available</option>
+                <option value="er">Sort: Emergency Beds</option>
+                <option value="name">Sort: Name (A-Z)</option>
+              </select>
+            </div>
+          </div>
+          <div class="view-toggle">
+            <button class="view-btn active" id="btnGridView" title="Grid View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Grid</span>
+            </button>
+            <button class="view-btn" id="btnListView" title="List View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span>List</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hospital Workspace -->
+        <div class="hospital-workspace" id="hospWorkspace">
+          <div class="hospital-list-area">
+            <div class="hosp-cards-grid" id="hospitalCardGrid"></div>
+            <!-- Pagination Bar -->
+            <div class="pagination-bar" style="display:flex;justify-content:space-between;align-items:center;padding:12px 4px;margin-top:8px;">
+              <span class="pagination-info" id="paginationInfo" style="font-size:12px;color:#7e92b2;">Showing 0–0 of 0 hospitals</span>
+              <div class="pagination-controls" id="paginationControls" style="display:flex;gap:4px;"></div>
+            </div>
+          </div>
+          <!-- Detail Panel -->
+          <div class="hospital-details-panel" id="hospitalDetailPanel" style="display:none;"></div>
+        </div>
+      </section>
+
+      <!-- ======== RESPONDERS VIEW ======== -->
+      <section class="view" id="responders">
+        <div class="hosp-intel-header">
+          <div class="hosp-title-group">
+            <div class="hosp-header-icon" style="color:#22d3a3;">🚓</div>
+            <div>
+              <h2 class="hosp-main-title">EMERGENCY RESPONDERS &amp; FLEET TELEMETRY</h2>
+              <p class="hosp-main-sub">Raipur Metropolitan &amp; Durg-Bhilai Sectors · GPS Telemetry, ALS/BLS Fleet &amp; Driver Command</p>
+            </div>
+          </div>
+          <div class="hosp-summary-strip">
+            <div class="summary-stat">
+              <span class="stat-num" id="respSummaryTotal">0</span>
+              <span class="stat-lbl">Total Fleet</span>
+            </div>
+            <div class="summary-stat accepting">
+              <span class="stat-num" id="respSummaryAvailable">0</span>
+              <span class="stat-lbl">Available</span>
+            </div>
+            <div class="summary-stat limited">
+              <span class="stat-num" id="respSummaryEnRoute">0</span>
+              <span class="stat-lbl">En Route</span>
+            </div>
+            <div class="summary-stat limited">
+              <span class="stat-num" id="respSummaryOnScene">0</span>
+              <span class="stat-lbl">On Scene</span>
+            </div>
+            <div class="summary-stat diverted">
+              <span class="stat-num" id="respSummaryOffline">0</span>
+              <span class="stat-lbl">Offline</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="hosp-toolbar">
+          <div class="hosp-search-wrapper">
+            <input type="text" id="respSearch" placeholder="Search by Unit ID, vehicle no, driver name, call sign…">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <div class="custom-select-wrapper">
+              <select id="filterRespDistrict" class="hosp-select">
+                <option value="">All Sectors (Raipur &amp; Durg)</option>
+                <option value="Raipur">Raipur Metropolitan Sector (200 Units)</option>
+                <option value="Durg">Durg-Bhilai Sector (30 Units)</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterRespZone" class="hosp-select">
+                <option value="">All Zones (All Sectors)</option>
+                <optgroup label="Raipur Metropolitan Sector">
+                  <option value="Raipur Central">Raipur Central</option>
+                  <option value="Telibanda">Telibanda</option>
+                  <option value="Pandri">Pandri</option>
+                  <option value="Tatibandh">Tatibandh</option>
+                  <option value="Shankar Nagar">Shankar Nagar</option>
+                  <option value="Naya Raipur">Naya Raipur</option>
+                  <option value="Bhatagaon">Bhatagaon</option>
+                  <option value="Devendra Nagar">Devendra Nagar</option>
+                  <option value="VIP Road">VIP Road</option>
+                  <option value="Birgaon">Birgaon</option>
+                  <option value="Gudhiyari">Gudhiyari</option>
+                  <option value="Mowa">Mowa</option>
+                </optgroup>
+                <optgroup label="Durg-Bhilai Sector">
+                  <option value="Durg Central">Durg Central</option>
+                  <option value="Bhilai West">Bhilai West</option>
+                  <option value="Bhilai East">Bhilai East</option>
+                  <option value="Supela Corridor">Supela Corridor</option>
+                  <option value="Highway NH53">Highway NH53</option>
+                  <option value="CORE_ZONE_0_5KM">Core Zone (0-5 km)</option>
+                  <option value="OUTER_METRO_5_15KM">Outer Metro (5-15 km)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterRespType" class="hosp-select">
+                <option value="">All Unit Types</option>
+                <option value="ALS Ambulance">ALS (Advanced Life Support)</option>
+                <option value="BLS Ambulance">BLS (Basic Life Support)</option>
+                <option value="Fire / Heavy Rescue">Fire / Heavy Rescue</option>
+                <option value="Police Highway Patrol">Police Highway Patrol</option>
+                <option value="volunteer">Volunteer First Responders</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterRespStatus" class="hosp-select">
+                <option value="">Status: All</option>
+                <option value="AVAILABLE">Available</option>
+                <option value="EN_ROUTE_TO_INCIDENT">En Route</option>
+                <option value="ON_SCENE">On Scene</option>
+                <option value="TRANSPORTING_PATIENT">Transporting</option>
+                <option value="MAINTENANCE">Maintenance</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterRespEquip" class="hosp-select">
+                <option value="">Equipment: Any</option>
+                <option value="ventilator">Ventilator Equipped</option>
+                <option value="aed">Defibrillator / AED</option>
+                <option value="o2_high">Oxygen &gt; 90%</option>
+                <option value="stretcher">2+ Stretchers</option>
+                <option value="extrication">Hydraulic Extrication Tool</option>
+                <option value="monitor">Patient Monitor</option>
+              </select>
+            </div>
+            <div class="custom-select-wrapper">
+              <select id="filterRespSort" class="hosp-select">
+                <option value="nearest">Sort: Nearest Distance</option>
+                <option value="o2">Sort: Oxygen Level (High-Low)</option>
+                <option value="status">Sort: Availability Status</option>
+                <option value="battery">Sort: Battery Level</option>
+                <option value="name">Sort: Unit ID</option>
+              </select>
+            </div>
+          </div>
+          <div class="view-toggle">
+            <button class="view-btn active" id="btnRespGridView" title="Grid View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Grid</span>
+            </button>
+            <button class="view-btn" id="btnRespListView" title="List View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span>List</span>
+            </button>
+          </div>
+          <!-- Add Driver Button -->
+          <button class="hosp-add-btn" id="btnAddAmbulanceDriver" title="Add New Ambulance Driver">
+            <span class="hosp-add-circle">+</span>
+            <span class="hosp-add-tag">Add Ambulance Driver</span>
+          </button>
+        </div>
+
+        <!-- Responder Workspace -->
+        <div class="hospital-workspace resp-workspace" id="respWorkspace">
+          <div class="hospital-list-area">
+            <div class="hosp-cards-grid resp-cards-grid" id="responderCardGrid"></div>
+            <!-- Pagination Bar -->
+            <div class="pagination-bar" style="display:flex;justify-content:space-between;align-items:center;padding:12px 4px;margin-top:8px;">
+              <span class="pagination-info" id="respPaginationInfo" style="font-size:12px;color:#7e92b2;">Showing 0–0 of 0 responders</span>
+              <div class="pagination-controls" id="respPaginationControls" style="display:flex;gap:4px;"></div>
+            </div>
+          </div>
+          <!-- Detail Panel -->
+          <div class="hospital-details-panel resp-detail-panel" id="responderDetailPanel" style="display:none;"></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="js/api.js?v=20260914_2"></script>
+  <script src="js/rakshak-bridge.js?v=20260914_2"></script>
+  <script src="js/app.js?v=20260914_2"></script>
+  <script src="js/live-monitoring.js?v=20260914_2"></script>
+</body>
+</html>

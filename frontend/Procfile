@@ -1,0 +1,1 @@
+web: python serve_and_open.py

@@ -1,0 +1,271 @@
+<section class="view" id="live-monitoring">
+  <div id="live-monitoring-page">
+    <style>
+      #live-monitoring-page { background: #07132a; color: #e6f0fa; font-family: 'Inter', system-ui, sans-serif; }
+      #live-monitoring-page .lm-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #0a1428; border-bottom: 1px solid #163660; flex-wrap: wrap; gap: 10px; }
+      #live-monitoring-page .lm-title { font-weight: 900; font-size: 1.05rem; letter-spacing: .08em; color: #38bdf8; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+      #live-monitoring-page .lm-badge { padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+      #live-monitoring-page .lm-badge-ok { background: #064e3b; border: 1px solid #10b981; color: #a7f3d0; }
+      #live-monitoring-page .lm-badge-info { background: #0f2648; border: 1px solid #0284c7; color: #7dd3fc; }
+      
+      #live-monitoring-page .lm-alert-banner { margin: 12px 20px 0; padding: 10px 16px; border-radius: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
+      #live-monitoring-page .lm-alert-conflict { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; }
+      #live-monitoring-page .lm-alert-reassign { background: #4c0519; border: 1px solid #f43f5e; color: #fecdd3; }
+      
+      #live-monitoring-page .lm-top-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; padding: 14px 20px; }
+      @media(max-width: 1180px) { #live-monitoring-page .lm-top-grid { grid-template-columns: 1fr; } }
+      
+      #live-monitoring-page .lm-mid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 20px 14px; }
+      @media(max-width: 980px) { #live-monitoring-page .lm-mid-grid { grid-template-columns: 1fr; } }
+      
+      #live-monitoring-page .lm-bot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 20px 24px; }
+      @media(max-width: 980px) { #live-monitoring-page .lm-bot-grid { grid-template-columns: 1fr; } }
+
+      #live-monitoring-page .lm-card { background: #0e1530; border: 1px solid #163660; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+      #live-monitoring-page .lm-card-header { padding: 10px 14px; background: #0a1428; border-bottom: 1px solid #163660; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; font-weight: 800; color: #93c5fd; letter-spacing: 0.05em; text-transform: uppercase; }
+      #live-monitoring-page .lm-card-body { padding: 12px 14px; flex: 1; }
+
+      #live-monitoring-page .lm-map-body { height: 440px; background: #07132a; position: relative; width: 100%; border-radius: 0 0 8px 8px; }
+      #live-monitoring-page .map-legend { position: absolute; bottom: 10px; left: 10px; background: rgba(10, 20, 40, 0.92); border: 1px solid #163660; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; color: #cbd5e1; z-index: 999; backdrop-filter: blur(4px); display: flex; gap: 10px; flex-wrap: wrap; }
+
+      #live-monitoring-page .btn-automatch { width: 100%; padding: 10px; background: linear-gradient(135deg, #0284c7, #0d9488); border: 1px solid #38bdf8; border-radius: 6px; color: #ffffff; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.05em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35); }
+      #live-monitoring-page .btn-automatch:hover { background: linear-gradient(135deg, #0369a1, #0f766e); transform: translateY(-1px); }
+
+      #live-monitoring-page .med-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin: 2px; }
+      #live-monitoring-page .med-chip.req { background: #3b0764; border: 1px solid #a855f7; color: #f3e8ff; }
+      #live-monitoring-page .med-chip.verified { background: #064e3b; border: 1px solid #10b981; color: #d1fae5; }
+      #live-monitoring-page .med-chip.off { background: #1e293b; border: 1px solid #334155; color: #64748b; }
+
+      #live-monitoring-page .match-block { background: #07132a; border: 1px solid #163660; border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+      #live-monitoring-page .match-title { font-size: 0.72rem; color: #7e92b2; letter-spacing: 0.06em; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
+      #live-monitoring-page .match-val { font-size: 0.95rem; font-weight: 800; color: #ffffff; display: flex; justify-content: space-between; align-items: center; }
+      #live-monitoring-page .match-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; line-height: 1.4; }
+
+      #live-monitoring-page .res-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #07132a; border: 1px solid #163660; border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem; }
+      #live-monitoring-page .res-val-group { display: flex; gap: 8px; font-weight: 800; font-size: 0.82rem; }
+      #live-monitoring-page .res-tag-avail { color: #4ade80; }
+      #live-monitoring-page .res-tag-occ { color: #94a3b8; }
+      #live-monitoring-page .res-tag-res { color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 1px 6px; border-radius: 3px; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+      #live-monitoring-page .audit-item { padding: 6px 10px; border-bottom: 1px solid #13254d; font-size: 0.78rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+      #live-monitoring-page .audit-item:last-child { border-bottom: none; }
+      #live-monitoring-page .audit-selected { color: #86efac; font-weight: 700; }
+      #live-monitoring-page .audit-rejected { color: #f87171; }
+
+      #live-monitoring-page .tl-step { display: flex; align-items: center; gap: 10px; padding: 4px 0; font-size: 0.78rem; color: #7e92b2; }
+      #live-monitoring-page .tl-step.active { color: #fde047; font-weight: 800; }
+      #live-monitoring-page .tl-step.done { color: #86efac; }
+      #live-monitoring-page .tl-dot { width: 8px; height: 8px; border-radius: 50%; background: #334155; }
+      #live-monitoring-page .tl-step.active .tl-dot { background: #fde047; box-shadow: 0 0 8px #fde047; }
+      #live-monitoring-page .tl-step.done .tl-dot { background: #22c55e; }
+    </style>
+
+    <!-- Topbar -->
+    <div class="lm-header">
+      <div>
+        <div class="lm-title"><span>🛡️</span> RAKSHAK 112 — DYNAMIC DISPATCH &amp; LIVE MONITORING</div>
+        <div style="color:#7e92b2;font-size:0.75rem;margin-top:2px;">Coordinated Dispatch Console · Optimal TTAC Engine · Atomic Resource Locks</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="lm-badge lm-badge-ok" id="lmSseStatus">● SSE CONNECTED</span>
+        <span class="lm-badge lm-badge-info" id="lmApiStatus">● API LIVE</span>
+        <span style="font-size:0.75rem;color:#94a3b8;font-family:monospace;" id="lmClock">--:--:--</span>
+      </div>
+    </div>
+
+    <!-- Dynamic Alert / Re-optimization Banner Slot -->
+    <div id="lmAlertContainer"></div>
+
+    <!-- TOP GRID: MAP + SELECTED INCIDENT & AUTO-MATCH -->
+    <div class="lm-top-grid">
+      
+      <!-- 1. LIVE FIELD MAP -->
+      <div class="lm-card">
+        <div class="lm-card-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span>🛰️ LIVE FIELD MAP</span>
+            <span class="lm-badge lm-badge-info" id="liveMapBadge">STREET GIS</span>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button class="map-ctrl-btn active" id="btnLiveMapRoad" onclick="setLiveMapType('roadmap', this)">Road</button>
+            <button class="map-ctrl-btn" id="btnLiveMapSat" onclick="setLiveMapType('hybrid', this)">Sat</button>
+            <button class="map-ctrl-btn" onclick="recenterLiveMap()">🎯 Recenter</button>
+          </div>
+        </div>
+        <div class="lm-map-body" id="liveMap">
+          <div class="map-legend">
+            <span>🚨 Patient SOS</span>
+            <span>🚑 Assigned Ambulance</span>
+            <span>🏥 Selected Hospital</span>
+            <span>🟢 Green Corridor Route</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SELECTED INCIDENT & AUTO-MATCH PANEL -->
+      <div class="lm-card">
+        <div class="lm-card-header">
+          <span id="lmIncidentHeaderId">INCIDENT COMMAND &amp; DYNAMIC AUTO-MATCH</span>
+          <span id="lmIncidentSeverityBadge" class="badge badge-critical">CRITICAL · L1</span>
+        </div>
+        <div class="lm-card-body" style="display:flex;flex-direction:column;gap:10px;">
+          
+          <!-- Incident Summary -->
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #163660;padding-bottom:8px;">
+            <div>
+              <div style="font-weight:800;font-size:0.95rem;color:#ffffff;" id="lmEmergencyType">Emergency Incident</div>
+              <div style="font-size:0.75rem;color:#94a3b8;margin-top:2px;" id="lmIncidentMeta">Location: Live GPS Link</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.72rem;color:#7e92b2;">TRIAGE VITALS</div>
+              <div style="font-size:0.8rem;color:#fca5a5;font-weight:700;" id="lmTriageVitals">2 Casualties · Severe Bleeding</div>
+            </div>
+          </div>
+
+          <!-- Medical Requirements -->
+          <div>
+            <div style="font-size:0.7rem;color:#7e92b2;letter-spacing:0.05em;font-weight:800;text-transform:uppercase;margin-bottom:2px;">Medical Requirements:</div>
+            <div id="lmMedicalReqChips">
+              <span class="med-chip req">✓ Trauma L1</span>
+              <span class="med-chip req">✓ ICU Bed</span>
+              <span class="med-chip req">✓ Emergency Surgery</span>
+              <span class="med-chip req">✓ Blood Bank</span>
+              <span class="med-chip off">✕ Ventilator</span>
+            </div>
+          </div>
+
+          <!-- Auto-Match Action Button -->
+          <button id="btnRunAutoMatch" class="btn-automatch" onclick="triggerAutoMatchOptimal()">
+            <span>⚡</span>
+            <span>AUTO-MATCH / RE-OPTIMIZE (OPTIMAL TTAC)</span>
+          </button>
+
+          <!-- Matched Ambulance & Matched Hospital Coordinated Cards -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            
+            <!-- Ambulance Match -->
+            <div class="match-block">
+              <div class="match-title">🚑 Assigned Ambulance</div>
+              <div class="match-val">
+                <span id="lmAmbUnit">AMB-108-01</span>
+                <span style="color:#38bdf8;font-size:0.8rem;" id="lmAmbEta">6 min ETA</span>
+              </div>
+              <div class="match-sub" id="lmAmbReason">ALS unit · Fastest feasible response</div>
+            </div>
+
+            <!-- Hospital Match -->
+            <div class="match-block">
+              <div class="match-title">🏥 Destination Hospital</div>
+              <div class="match-val">
+                <span id="lmHospName" style="font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">S.S. Hospital</span>
+                <span style="color:#22c55e;font-size:0.8rem;" id="lmTtacVal">TTAC 14m</span>
+              </div>
+              <div class="match-sub" id="lmHospReason">ICU: 1 avail · Trauma L1 · Pre-Alert SENT</div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MIDDLE GRID: RESOURCE STATUS + DECISION AUDIT -->
+    <div class="lm-mid-grid">
+      
+      <!-- 3. RESOURCE STATUS -->
+      <div class="lm-card">
+        <div class="lm-card-header">
+          <span>📊 LIVE RESOURCE STATUS (ATOMIC RESERVATIONS)</span>
+          <span style="font-size:0.7rem;color:#86efac;">● REAL-TIME LOCKS</span>
+        </div>
+        <div class="lm-card-body">
+          <div class="res-row">
+            <div><b>ICU BEDS</b> <small style="color:#7e92b2;">(Raipur + Durg)</small></div>
+            <div class="res-val-group">
+              <span class="res-tag-avail" id="resIcuAvail">-- Free</span>
+              <span class="res-tag-occ" id="resIcuOcc">-- Occupied</span>
+              <span class="res-tag-res" id="resIcuRes">-- Reserved</span>
+            </div>
+          </div>
+          <div class="res-row">
+            <div><b>ER TRAUMA BEDS</b> <small style="color:#7e92b2;">(Emergency Bays)</small></div>
+            <div class="res-val-group">
+              <span class="res-tag-avail" id="resErAvail">-- Free</span>
+              <span class="res-tag-occ" id="resErOcc">-- Occupied</span>
+              <span class="res-tag-res" id="resErRes">-- Reserved</span>
+            </div>
+          </div>
+          <div class="res-row">
+            <div><b>AMBULANCE FLEET</b> <small style="color:#7e92b2;">(ALS / BLS)</small></div>
+            <div class="res-val-group">
+              <span class="res-tag-avail" id="resAmbAvail">-- Available</span>
+              <span class="res-tag-occ" id="resAmbDispatched">-- Dispatched</span>
+              <span class="res-tag-res" id="resAmbBusy">-- Busy</span>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:#7e92b2;margin-top:6px;">
+            🔒 <i>Atomic Guarantee: Reserved ICU beds are locked immediately to prevent simultaneous SOS collisions.</i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. DECISION AUDIT / ALTERNATIVES -->
+      <div class="lm-card">
+        <div class="lm-card-header">
+          <span>⚖️ DECISION AUDIT &amp; ALTERNATIVES EXPLANATION</span>
+          <span style="font-size:0.7rem;color:#38bdf8;">EXPLAINABLE AI</span>
+        </div>
+        <div class="lm-card-body" id="lmDecisionAuditList" style="max-height:150px;overflow-y:auto;padding:6px 10px;">
+          <div class="audit-item"><span class="audit-selected">✓ Selected AMB-108-01</span><small style="color:#7e92b2;">ETA 6 min · ALS Unit</small></div>
+          <div class="audit-item"><span class="audit-rejected">✕ AMB-03 Rejected</span><small style="color:#7e92b2;">Higher ETA (11 min)</small></div>
+          <div class="audit-item"><span class="audit-selected">✓ Selected S.S. Hospital</span><small style="color:#7e92b2;">Trauma L1 + ICU Available (TTAC 14 min)</small></div>
+          <div class="audit-item"><span class="audit-rejected">✕ Hospital H1 Rejected</span><small style="color:#7e92b2;">ICU Capacity Exhausted</small></div>
+          <div class="audit-item"><span class="audit-rejected">✕ Hospital H2 Rejected</span><small style="color:#7e92b2;">Trauma Team Unavailable</small></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM GRID: LIVE EVENT STREAM + INCIDENT TIMELINE -->
+    <div class="lm-bot-grid">
+      
+      <!-- 5. LIVE EVENT STREAM -->
+      <div class="lm-card">
+        <div class="lm-card-header">
+          <span>📡 LIVE EVENT STREAM (SSE BROADCAST)</span>
+          <span style="font-size:0.7rem;color:#22c55e;">STREAM ACTIVE</span>
+        </div>
+        <div class="lm-card-body" id="lmLiveEventStreamList" style="max-height:160px;overflow-y:auto;padding:6px 10px;">
+          <!-- Dynamically populated via SSE -->
+        </div>
+      </div>
+
+      <!-- 6. INCIDENT TIMELINE -->
+      <div class="lm-card">
+        <div class="lm-card-header">
+          <span>⏱️ INCIDENT LIFECYCLE TIMELINE</span>
+          <span style="font-size:0.7rem;color:#fde047;" id="lmCurrentTimelineStage">EN ROUTE</span>
+        </div>
+        <div class="lm-card-body" id="lmIncidentTimelineList" style="max-height:160px;overflow-y:auto;padding:6px 10px;">
+          <div class="tl-step done"><div class="tl-dot"></div><span>SOS RECEIVED ✓</span> <small style="margin-left:auto;color:#64748b;">08:45:57</small></div>
+          <div class="tl-step done"><div class="tl-dot"></div><span>GPS CONFIRMED ✓</span> <small style="margin-left:auto;color:#64748b;">08:46:12</small></div>
+          <div class="tl-step done"><div class="tl-dot"></div><span>TRIAGE ASSESSED ✓</span> <small style="margin-left:auto;color:#64748b;">08:46:30</small></div>
+          <div class="tl-step done"><div class="tl-dot"></div><span>AMBULANCE RESERVED ✓</span> <small style="margin-left:auto;color:#64748b;">08:47:05</small></div>
+          <div class="tl-step active"><div class="tl-dot"></div><span>EN ROUTE TO SCENE ●</span> <small style="margin-left:auto;color:#fde047;">ACTIVE</small></div>
+          <div class="tl-step"><div class="tl-dot"></div><span>HOSPITAL PRE-ALERT / RESERVATION</span> <small style="margin-left:auto;color:#64748b;">PENDING</small></div>
+          <div class="tl-step"><div class="tl-dot"></div><span>HOSPITAL ACKNOWLEDGEMENT</span> <small style="margin-left:auto;color:#64748b;">—</small></div>
+          <div class="tl-step"><div class="tl-dot"></div><span>HANDOVER &amp; RESOLUTION</span> <small style="margin-left:auto;color:#64748b;">—</small></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Status Strip -->
+    <div style="padding:10px 20px 20px;color:#7e92b2;font-size:0.75rem;display:flex;justify-content:space-between;align-items:center;">
+      <span>Rakshak 112 Dynamic Dispatch Engine v2.5 · Endpoints: /api/incidents /api/sos /api/events /api/resources/status</span>
+      <span>Zero-hardcoding GPS &amp; Clinical Routing active</span>
+    </div>
+
+  </div>
+</section>

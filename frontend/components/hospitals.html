@@ -1,0 +1,30 @@
+<!-- ===== HOSPITALS VIEW ===== -->
+<section class="view" id="hospitals">
+  <div class="card card-body" id="context"></div>
+  <div class="hospital-grid">
+    <div>
+      <div class="card card-body">
+        <div class="label">SMART DESTINATION SELECTION</div>
+        <h2 style="margin:10px 0 20px">AI Recommended Destinations</h2>
+        <div id="recommendations"></div>
+      </div>
+      <div class="warning" id="warning" hidden></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>REQUIREMENT MATCHER</h2>
+        <span class="badge demo">DEMO</span>
+      </div>
+      <div class="card-body">
+        <div class="label" style="margin-bottom:8px">MANDATORY CLINICAL FILTERS</div>
+        <div class="requirements" id="requirements"></div>
+        <p class="meta" style="margin-top:16px">Ranked by verified capability, simulated availability, distance and ETA. Prototype only; not a clinical decision system.</p>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:30px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline">
+    <h2 style="margin:0;font-size:16px">HOSPITAL CAPABILITY DATABASE</h2>
+    <span class="card-label" id="hospitalCount">LOADING…</span>
+  </div>
+  <div id="hospitalList" style="display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(400px,1fr))"></div>
+</section>

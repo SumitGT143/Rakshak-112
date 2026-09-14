@@ -1,0 +1,51 @@
+<!-- ===== INCIDENTS VIEW ===== -->
+<section class="view active" id="incidents">
+  <div class="dashboard-grid">
+
+    <!-- KPI strip -->
+    <div class="stats-strip">
+      <div class="kpi">
+        <div class="kpi-label">TOTAL ACTIVE</div>
+        <div class="kpi-val" id="total">0</div>
+        <div class="kpi-sub">ACTIVE CASES</div>
+      </div>
+      <div class="kpi danger">
+        <div class="kpi-label">CRITICAL</div>
+        <div class="kpi-val" id="critical">0</div>
+        <div class="kpi-sub">REQUIRES ATTENTION</div>
+      </div>
+      <div class="kpi warning">
+        <div class="kpi-label">ACTIVE RESPONSE</div>
+        <div class="kpi-val" id="active">0</div>
+        <div class="kpi-sub">UNITS DEPLOYED</div>
+      </div>
+      <div class="kpi success">
+        <div class="kpi-label">LAST INCIDENT</div>
+        <div class="kpi-val" id="last" style="font-size:18px;margin-top:14px;text-transform:uppercase">—</div>
+        <div class="kpi-sub">LATEST REPORT</div>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div class="card map-container">
+      <div class="card-header">
+        <h2>LIVE INCIDENT MAP</h2>
+        <span class="card-label">REAL-TIME</span>
+      </div>
+      <div class="map" id="map">
+        <div class="map-grid-lines"></div>
+        <div class="empty" id="mapEmpty" style="position:relative;z-index:2">Waiting for emergency telemetry…</div>
+      </div>
+    </div>
+
+    <!-- Incident queue -->
+    <div class="card queue-panel">
+      <div class="card-header">
+        <h2>INCIDENT QUEUE</h2>
+        <span class="card-label" id="count">0 CASES</span>
+      </div>
+      <div class="queue-list" id="list"></div>
+    </div>
+
+  </div>
+</section>

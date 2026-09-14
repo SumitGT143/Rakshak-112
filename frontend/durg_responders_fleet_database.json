@@ -1,0 +1,1604 @@
+{
+  "dataset_name": "Rakshak 112 Durg-Bhilai Responders & Fleet Database",
+  "version": "1.0",
+  "generated_on": "2026-09-05",
+  "geographic_scope": "Durg-Bhilai District & 20km Metropolitan Emergency Radius, Chhattisgarh, India",
+  "command_center_hub": {
+    "name": "Durg-Bhilai Central Command & Control Center",
+    "latitude": 21.2100,
+    "longitude": 81.3650,
+    "operational_radius_km": 20.0
+  },
+  "summary_metrics": {
+    "total_fleet_units": 30,
+    "available_units": 15,
+    "en_route_units": 5,
+    "on_scene_units": 4,
+    "transporting_units": 3,
+    "handover_units": 1,
+    "maintenance_units": 1,
+    "off_duty_units": 1,
+    "average_district_eta_mins": 6.8
+  },
+  "responders": [
+    {
+      "id": "RESP-001",
+      "unit_id": "AMB-108-01",
+      "vehicle_number": "CG 07 AZ 4101",
+      "type": "Ambulance (ALS)",
+      "category": "ambulance",
+      "call_sign": "GARUDA-1",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Ramesh Sahu",
+        "phone": "+91 98271 23401",
+        "license_no": "CG07-2018-004521",
+        "experience_years": 8,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Sunil Sharma",
+        "designation": "Senior EMT / Paramedic",
+        "phone": "+91 94252 11001"
+      },
+      "station": {
+        "name": "Durg District Hospital Base Station",
+        "address": "Civil Lines, Durg, Chhattisgarh 491001",
+        "latitude": 21.1904,
+        "longitude": 81.2849
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1904,
+        "current_longitude": 81.2849,
+        "distance_from_center_km": 3.2,
+        "estimated_eta_mins": 5,
+        "speed_kmh": 0,
+        "heading_degrees": 90,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 94,
+        "last_ping": "10:04:12 AM"
+      },
+      "equipment": {
+        "ventilator": true,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 98,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Level-1 Advanced",
+        "suction_machine": true,
+        "patient_monitor": true
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-002",
+      "unit_id": "AMB-108-02",
+      "vehicle_number": "CG 07 AZ 4102",
+      "type": "Ambulance (ALS)",
+      "category": "ambulance",
+      "call_sign": "GARUDA-2",
+      "status": "EN_ROUTE_TO_INCIDENT",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Suresh Patel",
+        "phone": "+91 98271 23402",
+        "license_no": "CG07-2016-008912",
+        "experience_years": 10,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Dr. Vikas Sinha",
+        "designation": "Emergency Medical Officer",
+        "phone": "+91 94252 11002"
+      },
+      "station": {
+        "name": "Supela CHC Emergency Depot",
+        "address": "Supela Main Market, Bhilai, Chhattisgarh 490023",
+        "latitude": 21.2085,
+        "longitude": 81.3392
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2120,
+        "current_longitude": 81.3510,
+        "distance_from_center_km": 2.1,
+        "estimated_eta_mins": 3,
+        "speed_kmh": 52,
+        "heading_degrees": 75,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 89,
+        "last_ping": "10:04:25 AM"
+      },
+      "equipment": {
+        "ventilator": true,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 92,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Level-1 Advanced",
+        "suction_machine": true,
+        "patient_monitor": true
+      },
+      "active_mission": {
+        "incident_id": "INC-204",
+        "incident_type": "Multi-Vehicle Collision",
+        "priority": "CRITICAL",
+        "target_location": "GE Road near Power House Flyover",
+        "started_at": "10:01:10 AM",
+        "target_hospital_id": "DURG-P-004",
+        "target_hospital_name": "JLN Hospital & Research Centre (Sector 9)"
+      }
+    },
+    {
+      "id": "RESP-003",
+      "unit_id": "AMB-108-03",
+      "vehicle_number": "CG 07 AZ 4103",
+      "type": "Ambulance (BLS)",
+      "category": "ambulance",
+      "call_sign": "SANJEEVANI-1",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Amit Verma",
+        "phone": "+91 98271 23403",
+        "license_no": "CG07-2020-001290",
+        "experience_years": 5,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Neha Sahu",
+        "designation": "EMT Basic / Nurse",
+        "phone": "+91 94252 11003"
+      },
+      "station": {
+        "name": "Supela CHC Emergency Depot",
+        "address": "Supela Main Market, Bhilai, Chhattisgarh 490023",
+        "latitude": 21.2085,
+        "longitude": 81.3392
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2085,
+        "current_longitude": 81.3392,
+        "distance_from_center_km": 1.8,
+        "estimated_eta_mins": 3,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 97,
+        "last_ping": "10:03:55 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 95,
+        "stretcher_count": 1,
+        "trauma_kit_level": "Level-2 Basic",
+        "suction_machine": true,
+        "patient_monitor": false
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-004",
+      "unit_id": "AMB-108-04",
+      "vehicle_number": "CG 07 AZ 4104",
+      "type": "Ambulance (ALS)",
+      "category": "ambulance",
+      "call_sign": "GARUDA-3",
+      "status": "TRANSPORTING_PATIENT",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Karan Netam",
+        "phone": "+91 98271 23404",
+        "license_no": "CG07-2017-006745",
+        "experience_years": 7,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Anand Kujur",
+        "designation": "Critical Care Paramedic",
+        "phone": "+91 94252 11004"
+      },
+      "station": {
+        "name": "Sector 9 Hospital Response Bay",
+        "address": "Sector 9, Bhilai, Chhattisgarh 490009",
+        "latitude": 21.1732,
+        "longitude": 81.3789
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1840,
+        "current_longitude": 81.3710,
+        "distance_from_center_km": 4.2,
+        "estimated_eta_mins": 4,
+        "speed_kmh": 58,
+        "heading_degrees": 160,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 82,
+        "last_ping": "10:04:30 AM"
+      },
+      "equipment": {
+        "ventilator": true,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 86,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Level-1 Advanced",
+        "suction_machine": true,
+        "patient_monitor": true
+      },
+      "active_mission": {
+        "incident_id": "INC-198",
+        "incident_type": "Industrial Crush Injury",
+        "priority": "CRITICAL",
+        "target_location": "Bhilai Steel Plant Gate 4",
+        "started_at": "09:48:00 AM",
+        "target_hospital_id": "DURG-P-004",
+        "target_hospital_name": "JLN Hospital & Research Centre (Sector 9)"
+      }
+    },
+    {
+      "id": "RESP-005",
+      "unit_id": "AMB-108-05",
+      "vehicle_number": "CG 07 AZ 4105",
+      "type": "Ambulance (BLS)",
+      "category": "ambulance",
+      "call_sign": "SANJEEVANI-2",
+      "status": "PATIENT_HANDOVER",
+      "zone": "MID_ZONE_5_12KM",
+      "driver": {
+        "name": "Mohan Lal",
+        "phone": "+91 98271 23405",
+        "license_no": "CG07-2015-003322",
+        "experience_years": 11,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Pawan Barik",
+        "designation": "EMT Basic",
+        "phone": "+91 94252 11005"
+      },
+      "station": {
+        "name": "Chandulal Chandrakar Memorial Depot",
+        "address": "Kachandur, Durg, Chhattisgarh 490024",
+        "latitude": 21.1645,
+        "longitude": 81.3021
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1645,
+        "current_longitude": 81.3021,
+        "distance_from_center_km": 8.5,
+        "estimated_eta_mins": 0,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "GOOD",
+        "battery_pct": 78,
+        "last_ping": "10:04:15 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 74,
+        "stretcher_count": 1,
+        "trauma_kit_level": "Level-2 Basic",
+        "suction_machine": true,
+        "patient_monitor": false
+      },
+      "active_mission": {
+        "incident_id": "INC-192",
+        "incident_type": "Cardiac Distress",
+        "priority": "HIGH",
+        "target_location": "Borsi Colony, Durg",
+        "started_at": "09:30:15 AM",
+        "target_hospital_id": "DURG-P-007",
+        "target_hospital_name": "Chandulal Chandrakar Memorial Hospital"
+      }
+    },
+    {
+      "id": "RESP-006",
+      "unit_id": "AMB-108-06",
+      "vehicle_number": "CG 07 AZ 4106",
+      "type": "Ambulance (ALS)",
+      "category": "ambulance",
+      "call_sign": "GARUDA-4",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Deepak Dewangan",
+        "phone": "+91 98271 23406",
+        "license_no": "CG07-2019-007812",
+        "experience_years": 6,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Roshan Tigga",
+        "designation": "Senior EMT",
+        "phone": "+91 94252 11006"
+      },
+      "station": {
+        "name": "Sector 9 Hospital Hub",
+        "address": "Sector 9, Bhilai, Chhattisgarh 490009",
+        "latitude": 21.1732,
+        "longitude": 81.3789
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1732,
+        "current_longitude": 81.3789,
+        "distance_from_center_km": 4.5,
+        "estimated_eta_mins": 6,
+        "speed_kmh": 0,
+        "heading_degrees": 180,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 99,
+        "last_ping": "10:04:00 AM"
+      },
+      "equipment": {
+        "ventilator": true,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 100,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Level-1 Advanced",
+        "suction_machine": true,
+        "patient_monitor": true
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-007",
+      "unit_id": "AMB-108-07",
+      "vehicle_number": "CG 07 AZ 4107",
+      "type": "Ambulance (ALS)",
+      "category": "ambulance",
+      "call_sign": "GARUDA-5",
+      "status": "AVAILABLE",
+      "zone": "OUTER_ZONE_12_20KM",
+      "driver": {
+        "name": "Hemant Deshmukh",
+        "phone": "+91 98271 23407",
+        "license_no": "CG07-2014-001190",
+        "experience_years": 12,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Manoj Mandavi",
+        "designation": "EMT Specialist",
+        "phone": "+91 94252 11007"
+      },
+      "station": {
+        "name": "Kumhari Toll Plaza Highway Station",
+        "address": "National Highway 53, Kumhari, Chhattisgarh 490042",
+        "latitude": 21.2678,
+        "longitude": 81.5120
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2678,
+        "current_longitude": 81.5120,
+        "distance_from_center_km": 16.5,
+        "estimated_eta_mins": 18,
+        "speed_kmh": 0,
+        "heading_degrees": 270,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 91,
+        "last_ping": "10:03:45 AM"
+      },
+      "equipment": {
+        "ventilator": true,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 94,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Level-1 Advanced",
+        "suction_machine": true,
+        "patient_monitor": true
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-008",
+      "unit_id": "AMB-108-08",
+      "vehicle_number": "CG 07 AZ 4108",
+      "type": "Ambulance (BLS)",
+      "category": "ambulance",
+      "call_sign": "SANJEEVANI-3",
+      "status": "MAINTENANCE",
+      "zone": "OUTER_ZONE_12_20KM",
+      "driver": {
+        "name": "Prakash Joshi",
+        "phone": "+91 98271 23408",
+        "license_no": "CG07-2018-009941",
+        "experience_years": 6,
+        "shift": "Standby Maintenance"
+      },
+      "lead_crew": {
+        "name": "Sunil Markam",
+        "designation": "Depot Technician",
+        "phone": "+91 94252 11008"
+      },
+      "station": {
+        "name": "Nandini Central Workshop Depot",
+        "address": "Nandini Mines Area, Durg, Chhattisgarh 490036",
+        "latitude": 21.3650,
+        "longitude": 81.3980
+      },
+      "live_telemetry": {
+        "current_latitude": 21.3650,
+        "current_longitude": 81.3980,
+        "distance_from_center_km": 18.2,
+        "estimated_eta_mins": 0,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "GOOD",
+        "battery_pct": 45,
+        "last_ping": "10:02:10 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 12,
+        "stretcher_count": 1,
+        "trauma_kit_level": "Under Restock",
+        "suction_machine": false,
+        "patient_monitor": false
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-009",
+      "unit_id": "AMB-108-09",
+      "vehicle_number": "CG 07 AZ 4109",
+      "type": "Ambulance (BLS)",
+      "category": "ambulance",
+      "call_sign": "SANJEEVANI-4",
+      "status": "AVAILABLE",
+      "zone": "MID_ZONE_5_12KM",
+      "driver": {
+        "name": "Gaurav Chandrakar",
+        "phone": "+91 98271 23409",
+        "license_no": "CG07-2021-003412",
+        "experience_years": 4,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Priyanka Tandi",
+        "designation": "EMT Basic",
+        "phone": "+91 94252 11009"
+      },
+      "station": {
+        "name": "Charoda Railway Hospital Outpost",
+        "address": "Bhilai Charoda, Durg, Chhattisgarh 490025",
+        "latitude": 21.2185,
+        "longitude": 81.4420
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2185,
+        "current_longitude": 81.4420,
+        "distance_from_center_km": 7.9,
+        "estimated_eta_mins": 9,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 88,
+        "last_ping": "10:04:10 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 91,
+        "stretcher_count": 1,
+        "trauma_kit_level": "Level-2 Basic",
+        "suction_machine": true,
+        "patient_monitor": false
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-010",
+      "unit_id": "AMB-108-10",
+      "vehicle_number": "CG 07 AZ 4110",
+      "type": "Ambulance (ALS)",
+      "category": "ambulance",
+      "call_sign": "GARUDA-6",
+      "status": "AVAILABLE",
+      "zone": "MID_ZONE_5_12KM",
+      "driver": {
+        "name": "Santosh Nishad",
+        "phone": "+91 98271 23410",
+        "license_no": "CG07-2016-004455",
+        "experience_years": 9,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Kamlesh Yadav",
+        "designation": "Senior EMT",
+        "phone": "+91 94252 11010"
+      },
+      "station": {
+        "name": "Junwani Apollo BSR Hub",
+        "address": "Junwani Road, Smriti Nagar, Bhilai, Chhattisgarh 490020",
+        "latitude": 21.2321,
+        "longitude": 81.3320
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2321,
+        "current_longitude": 81.3320,
+        "distance_from_center_km": 5.4,
+        "estimated_eta_mins": 7,
+        "speed_kmh": 0,
+        "heading_degrees": 90,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 95,
+        "last_ping": "10:04:05 AM"
+      },
+      "equipment": {
+        "ventilator": true,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 96,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Level-1 Advanced",
+        "suction_machine": true,
+        "patient_monitor": true
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-011",
+      "unit_id": "AMB-108-11",
+      "vehicle_number": "CG 07 AZ 4111",
+      "type": "Ambulance (ALS)",
+      "category": "ambulance",
+      "call_sign": "GARUDA-7",
+      "status": "EN_ROUTE_TO_INCIDENT",
+      "zone": "OUTER_ZONE_12_20KM",
+      "driver": {
+        "name": "Raju Sinha",
+        "phone": "+91 98271 23411",
+        "license_no": "CG07-2017-009182",
+        "experience_years": 8,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Toman Lal Netam",
+        "designation": "Paramedic Specialist",
+        "phone": "+91 94252 11011"
+      },
+      "station": {
+        "name": "Anjora Bypass Highway Base",
+        "address": "Anjora Toll Junction, Durg, Chhattisgarh 491001",
+        "latitude": 21.1412,
+        "longitude": 81.2180
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1550,
+        "current_longitude": 81.2350,
+        "distance_from_center_km": 15.2,
+        "estimated_eta_mins": 14,
+        "speed_kmh": 65,
+        "heading_degrees": 45,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 84,
+        "last_ping": "10:04:28 AM"
+      },
+      "equipment": {
+        "ventilator": true,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 90,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Level-1 Advanced",
+        "suction_machine": true,
+        "patient_monitor": true
+      },
+      "active_mission": {
+        "incident_id": "INC-206",
+        "incident_type": "Truck Overturn on Highway",
+        "priority": "HIGH",
+        "target_location": "Anjora-Rajnandgaon Expressway Km 14",
+        "started_at": "10:02:40 AM",
+        "target_hospital_id": "DURG-G-002",
+        "target_hospital_name": "Durg District Hospital"
+      }
+    },
+    {
+      "id": "RESP-012",
+      "unit_id": "AMB-108-12",
+      "vehicle_number": "CG 07 AZ 4112",
+      "type": "Ambulance (BLS)",
+      "category": "ambulance",
+      "call_sign": "SANJEEVANI-5",
+      "status": "AVAILABLE",
+      "zone": "OUTER_ZONE_12_20KM",
+      "driver": {
+        "name": "Vinod Baghel",
+        "phone": "+91 98271 23412",
+        "license_no": "CG07-2022-005611",
+        "experience_years": 3,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Sarita Mandavi",
+        "designation": "EMT Basic",
+        "phone": "+91 94252 11012"
+      },
+      "station": {
+        "name": "Patan CHC Health Hub",
+        "address": "Patan Main Road, Durg, Chhattisgarh 491111",
+        "latitude": 21.0320,
+        "longitude": 81.5340
+      },
+      "live_telemetry": {
+        "current_latitude": 21.0320,
+        "current_longitude": 81.5340,
+        "distance_from_center_km": 19.4,
+        "estimated_eta_mins": 21,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "GOOD",
+        "battery_pct": 93,
+        "last_ping": "10:03:50 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 89,
+        "stretcher_count": 1,
+        "trauma_kit_level": "Level-2 Basic",
+        "suction_machine": true,
+        "patient_monitor": false
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-013",
+      "unit_id": "QRT-MED-01",
+      "vehicle_number": "CG 07 BQ 9101",
+      "type": "First Responder Bike (QRT)",
+      "category": "ambulance",
+      "call_sign": "CHETAK-MED-1",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Nilesh Tandon",
+        "phone": "+91 98271 23413",
+        "license_no": "CG07-2021-008122",
+        "experience_years": 4,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Nilesh Tandon",
+        "designation": "Rapid Paramedic First Responder",
+        "phone": "+91 98271 23413"
+      },
+      "station": {
+        "name": "Power House Traffic Island",
+        "address": "Power House Chowk, Bhilai, Chhattisgarh 490011",
+        "latitude": 21.2050,
+        "longitude": 81.3620
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2050,
+        "current_longitude": 81.3620,
+        "distance_from_center_km": 0.8,
+        "estimated_eta_mins": 1,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 98,
+        "last_ping": "10:04:31 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 100,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Rapid Hemostatic Pack",
+        "suction_machine": true,
+        "patient_monitor": false
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-014",
+      "unit_id": "QRT-MED-02",
+      "vehicle_number": "CG 07 BQ 9102",
+      "type": "First Responder Bike (QRT)",
+      "category": "ambulance",
+      "call_sign": "CHETAK-MED-2",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Ajay Rawat",
+        "phone": "+91 98271 23414",
+        "license_no": "CG07-2020-004419",
+        "experience_years": 5,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Ajay Rawat",
+        "designation": "Rapid Paramedic First Responder",
+        "phone": "+91 98271 23414"
+      },
+      "station": {
+        "name": "Nehru Nagar Square Outpost",
+        "address": "Nehru Nagar East, Bhilai, Chhattisgarh 490020",
+        "latitude": 21.2290,
+        "longitude": 81.3415
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2290,
+        "current_longitude": 81.3415,
+        "distance_from_center_km": 3.1,
+        "estimated_eta_mins": 3,
+        "speed_kmh": 0,
+        "heading_degrees": 180,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 96,
+        "last_ping": "10:04:19 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 100,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Rapid Hemostatic Pack",
+        "suction_machine": true,
+        "patient_monitor": false
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-015",
+      "unit_id": "PCR-112-01",
+      "vehicle_number": "CG 07 GA 1101",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-1",
+      "status": "ON_SCENE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "HC Alok Mishra",
+        "phone": "+91 98271 23415",
+        "license_no": "CG07-2012-000188",
+        "experience_years": 14,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "SI R. K. Dhruw",
+        "designation": "Sub-Inspector / Patrol Lead",
+        "phone": "+91 94252 11015"
+      },
+      "station": {
+        "name": "Supela Police Station",
+        "address": "Supela Thana, Bhilai, Chhattisgarh 490023",
+        "latitude": 21.2110,
+        "longitude": 81.3380
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2135,
+        "current_longitude": 81.3530,
+        "distance_from_center_km": 1.4,
+        "estimated_eta_mins": 0,
+        "speed_kmh": 0,
+        "heading_degrees": 90,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 91,
+        "last_ping": "10:04:32 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 8,
+        "body_cams": 2
+      },
+      "active_mission": {
+        "incident_id": "INC-204",
+        "incident_type": "Multi-Vehicle Collision",
+        "priority": "CRITICAL",
+        "target_location": "GE Road near Power House Flyover",
+        "started_at": "10:00:15 AM",
+        "action_note": "Managing traffic diversion and cordoning crash area"
+      }
+    },
+    {
+      "id": "RESP-016",
+      "unit_id": "PCR-112-02",
+      "vehicle_number": "CG 07 GA 1102",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-2",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Const. Vikram Singh",
+        "phone": "+91 98271 23416",
+        "license_no": "CG07-2018-002144",
+        "experience_years": 7,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "ASI Satish Banchor",
+        "designation": "Assistant Sub-Inspector",
+        "phone": "+91 94252 11016"
+      },
+      "station": {
+        "name": "Nehru Nagar Patrol Sector",
+        "address": "Nehru Nagar Chowk, Bhilai, Chhattisgarh 490020",
+        "latitude": 21.2280,
+        "longitude": 81.3430
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2280,
+        "current_longitude": 81.3430,
+        "distance_from_center_km": 2.8,
+        "estimated_eta_mins": 4,
+        "speed_kmh": 22,
+        "heading_degrees": 240,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 89,
+        "last_ping": "10:04:22 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 6,
+        "body_cams": 2
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-017",
+      "unit_id": "PCR-112-03",
+      "vehicle_number": "CG 07 GA 1103",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-3",
+      "status": "EN_ROUTE_TO_INCIDENT",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Const. Dharmendra साहू",
+        "phone": "+91 98271 23417",
+        "license_no": "CG07-2019-003310",
+        "experience_years": 6,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "HC Devendra Sahu",
+        "designation": "Head Constable",
+        "phone": "+91 94252 11017"
+      },
+      "station": {
+        "name": "Durg Kotwali Thana Base",
+        "address": "Station Road, Durg, Chhattisgarh 491001",
+        "latitude": 21.1940,
+        "longitude": 81.2810
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2010,
+        "current_longitude": 81.3050,
+        "distance_from_center_km": 3.9,
+        "estimated_eta_mins": 5,
+        "speed_kmh": 48,
+        "heading_degrees": 85,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 93,
+        "last_ping": "10:04:29 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 6,
+        "body_cams": 2
+      },
+      "active_mission": {
+        "incident_id": "INC-208",
+        "incident_type": "Pedestrian Hit & Run",
+        "priority": "HIGH",
+        "target_location": "Durg Station Road Junction",
+        "started_at": "10:03:00 AM",
+        "action_note": "Intercepting suspect vehicle and assisting victim"
+      }
+    },
+    {
+      "id": "RESP-018",
+      "unit_id": "PCR-112-04",
+      "vehicle_number": "CG 07 GA 1104",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-4",
+      "status": "AVAILABLE",
+      "zone": "MID_ZONE_5_12KM",
+      "driver": {
+        "name": "Const. Rajesh Yadav",
+        "phone": "+91 98271 23418",
+        "license_no": "CG07-2016-005523",
+        "experience_years": 9,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "ASI Jagdish Prasad",
+        "designation": "Assistant Sub-Inspector",
+        "phone": "+91 94252 11018"
+      },
+      "station": {
+        "name": "Camp 1 / Chhaoni Thana Sector",
+        "address": "Camp 1, Bhilai, Chhattisgarh 490023",
+        "latitude": 21.2190,
+        "longitude": 81.3850
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2190,
+        "current_longitude": 81.3850,
+        "distance_from_center_km": 5.8,
+        "estimated_eta_mins": 7,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 87,
+        "last_ping": "10:04:12 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 6,
+        "body_cams": 2
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-019",
+      "unit_id": "PCR-112-05",
+      "vehicle_number": "CG 07 GA 1105",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-5",
+      "status": "ON_SCENE",
+      "zone": "MID_ZONE_5_12KM",
+      "driver": {
+        "name": "Const. Bhupendra Sen",
+        "phone": "+91 98271 23419",
+        "license_no": "CG07-2020-007188",
+        "experience_years": 5,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "HC Maheshwar Sahu",
+        "designation": "Head Constable",
+        "phone": "+91 94252 11019"
+      },
+      "station": {
+        "name": "Jamul Thana Outpost",
+        "address": "Industrial Area, Jamul, Durg, Chhattisgarh 490024",
+        "latitude": 21.2450,
+        "longitude": 81.4010
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2460,
+        "current_longitude": 81.4025,
+        "distance_from_center_km": 6.7,
+        "estimated_eta_mins": 0,
+        "speed_kmh": 0,
+        "heading_degrees": 90,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 82,
+        "last_ping": "10:04:30 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 8,
+        "body_cams": 2
+      },
+      "active_mission": {
+        "incident_id": "INC-199",
+        "incident_type": "Factory Chemical Spill Perimeter",
+        "priority": "HIGH",
+        "target_location": "Jamul Industrial Sector B",
+        "started_at": "09:52:00 AM",
+        "action_note": "Establishing 200m evacuation cordon"
+      }
+    },
+    {
+      "id": "RESP-020",
+      "unit_id": "PCR-112-06",
+      "vehicle_number": "CG 07 GA 1106",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-6",
+      "status": "AVAILABLE",
+      "zone": "MID_ZONE_5_12KM",
+      "driver": {
+        "name": "Const. Rahul Sonwani",
+        "phone": "+91 98271 23420",
+        "license_no": "CG07-2017-004491",
+        "experience_years": 8,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "ASI Pradeep Tirkey",
+        "designation": "Assistant Sub-Inspector",
+        "phone": "+91 94252 11020"
+      },
+      "station": {
+        "name": "Risali Sector Post",
+        "address": "Risali Main Road, Bhilai, Chhattisgarh 490006",
+        "latitude": 21.1610,
+        "longitude": 81.3480
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1610,
+        "current_longitude": 81.3480,
+        "distance_from_center_km": 6.2,
+        "estimated_eta_mins": 8,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 96,
+        "last_ping": "10:04:02 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 6,
+        "body_cams": 2
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-021",
+      "unit_id": "PCR-112-07",
+      "vehicle_number": "CG 07 GA 1107",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-7",
+      "status": "AVAILABLE",
+      "zone": "OUTER_ZONE_12_20KM",
+      "driver": {
+        "name": "Const. Sanjay Kurre",
+        "phone": "+91 98271 23421",
+        "license_no": "CG07-2015-001289",
+        "experience_years": 10,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "SI O. P. Sahu",
+        "designation": "Sub-Inspector",
+        "phone": "+91 94252 11021"
+      },
+      "station": {
+        "name": "Kumhari Check Post",
+        "address": "National Highway 53, Kumhari, Chhattisgarh 490042",
+        "latitude": 21.2720,
+        "longitude": 81.5180
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2720,
+        "current_longitude": 81.5180,
+        "distance_from_center_km": 17.2,
+        "estimated_eta_mins": 19,
+        "speed_kmh": 0,
+        "heading_degrees": 270,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 91,
+        "last_ping": "10:03:59 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 10,
+        "body_cams": 2
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-022",
+      "unit_id": "PCR-112-08",
+      "vehicle_number": "CG 07 GA 1108",
+      "type": "Police PCR Van (112)",
+      "category": "police",
+      "call_sign": "VAJRA-8",
+      "status": "AVAILABLE",
+      "zone": "OUTER_ZONE_12_20KM",
+      "driver": {
+        "name": "Const. Santosh Korram",
+        "phone": "+91 98271 23422",
+        "license_no": "CG07-2021-006214",
+        "experience_years": 4,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "HC Brijesh Pandey",
+        "designation": "Head Constable",
+        "phone": "+91 94252 11022"
+      },
+      "station": {
+        "name": "Ahiwara Thana Sector",
+        "address": "Ahiwara Main Market, Durg, Chhattisgarh 490036",
+        "latitude": 21.3520,
+        "longitude": 81.3910
+      },
+      "live_telemetry": {
+        "current_latitude": 21.3520,
+        "current_longitude": 81.3910,
+        "distance_from_center_km": 16.8,
+        "estimated_eta_mins": 18,
+        "speed_kmh": 0,
+        "heading_degrees": 180,
+        "gps_signal": "GOOD",
+        "battery_pct": 90,
+        "last_ping": "10:04:14 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Police Tactical First-Aid",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 8,
+        "body_cams": 2
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-023",
+      "unit_id": "TRAFFIC-112-01",
+      "vehicle_number": "CG 07 GA 1121",
+      "type": "Traffic Interceptor / Corridor Clearer",
+      "category": "police",
+      "call_sign": "CORRIDOR-ALPHA",
+      "status": "TRANSPORTING_PATIENT",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Head Const. Dilip Markande",
+        "phone": "+91 98271 23423",
+        "license_no": "CG07-2013-002231",
+        "experience_years": 13,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "TI Tarun Rathore",
+        "designation": "Traffic Inspector",
+        "phone": "+91 94252 11023"
+      },
+      "station": {
+        "name": "Durg-Bhilai Traffic Central HQ",
+        "address": "Sector 6 Police Control Room, Bhilai, Chhattisgarh 490006",
+        "latitude": 21.1920,
+        "longitude": 81.3560
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1890,
+        "current_longitude": 81.3680,
+        "distance_from_center_km": 3.4,
+        "estimated_eta_mins": 3,
+        "speed_kmh": 62,
+        "heading_degrees": 140,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 84,
+        "last_ping": "10:04:33 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Emergency Siren & PA Unit",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 12,
+        "body_cams": 2
+      },
+      "active_mission": {
+        "incident_id": "INC-198",
+        "incident_type": "Green Corridor Escort",
+        "priority": "CRITICAL",
+        "target_location": "Pilot escort for AMB-108-04 to JLN Sector 9 ICU",
+        "started_at": "09:50:00 AM",
+        "target_hospital_id": "DURG-P-004",
+        "target_hospital_name": "JLN Hospital & Research Centre (Sector 9)"
+      }
+    },
+    {
+      "id": "RESP-024",
+      "unit_id": "TRAFFIC-112-02",
+      "vehicle_number": "CG 07 GA 1122",
+      "type": "Traffic Interceptor / Corridor Clearer",
+      "category": "police",
+      "call_sign": "CORRIDOR-BRAVO",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Const. Ashwani साहू",
+        "phone": "+91 98271 23424",
+        "license_no": "CG07-2018-005612",
+        "experience_years": 6,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "SI K. K. Soni",
+        "designation": "Traffic Sub-Inspector",
+        "phone": "+91 94252 11024"
+      },
+      "station": {
+        "name": "Durg Patel Chowk Post",
+        "address": "Patel Chowk, Durg, Chhattisgarh 491001",
+        "latitude": 21.1890,
+        "longitude": 81.2820
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1890,
+        "current_longitude": 81.2820,
+        "distance_from_center_km": 4.1,
+        "estimated_eta_mins": 5,
+        "speed_kmh": 0,
+        "heading_degrees": 90,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 95,
+        "last_ping": "10:04:10 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Emergency Siren & PA Unit",
+        "suction_machine": false,
+        "patient_monitor": false,
+        "breathalyzer": true,
+        "traffic_cones": 12,
+        "body_cams": 2
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-025",
+      "unit_id": "FIRE-101-01",
+      "vehicle_number": "CG 07 FA 0101",
+      "type": "Fire & Rescue Tender",
+      "category": "fire",
+      "call_sign": "AGNI-1",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Manoj Thakur",
+        "phone": "+91 98271 23425",
+        "license_no": "CG07-2011-008177",
+        "experience_years": 15,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Station Officer B. L. Verma",
+        "designation": "Fire Station Officer",
+        "phone": "+91 94252 11025"
+      },
+      "station": {
+        "name": "Sector 6 Central Fire Station",
+        "address": "Civic Centre, Sector 6, Bhilai, Chhattisgarh 490006",
+        "latitude": 21.1960,
+        "longitude": 81.3520
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1960,
+        "current_longitude": 81.3520,
+        "distance_from_center_km": 4.1,
+        "estimated_eta_mins": 6,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 98,
+        "last_ping": "10:04:18 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 100,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Hydraulic Cutters & Extraction",
+        "water_capacity_litres": 4500,
+        "foam_capacity_litres": 500,
+        "breathing_apparatus_sets": 4
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-026",
+      "unit_id": "FIRE-101-02",
+      "vehicle_number": "CG 07 FA 0102",
+      "type": "Fire & Rescue Tender",
+      "category": "fire",
+      "call_sign": "AGNI-2",
+      "status": "EN_ROUTE_TO_INCIDENT",
+      "zone": "MID_ZONE_5_12KM",
+      "driver": {
+        "name": "Dinesh Baghel",
+        "phone": "+91 98271 23426",
+        "license_no": "CG07-2015-004419",
+        "experience_years": 10,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Leading Fireman K. R. Netam",
+        "designation": "Leading Fireman",
+        "phone": "+91 94252 11026"
+      },
+      "station": {
+        "name": "Durg City Fire Station",
+        "address": "Borsi Road, Durg, Chhattisgarh 491001",
+        "latitude": 21.1820,
+        "longitude": 81.2780
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2210,
+        "current_longitude": 81.3910,
+        "distance_from_center_km": 9.8,
+        "estimated_eta_mins": 11,
+        "speed_kmh": 46,
+        "heading_degrees": 55,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 91,
+        "last_ping": "10:04:26 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 100,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Hydraulic Cutters & Extraction",
+        "water_capacity_litres": 5000,
+        "foam_capacity_litres": 600,
+        "breathing_apparatus_sets": 4
+      },
+      "active_mission": {
+        "incident_id": "INC-199",
+        "incident_type": "Chemical Hazard Containment",
+        "priority": "HIGH",
+        "target_location": "Jamul Industrial Area Sector B",
+        "started_at": "09:55:00 AM",
+        "action_note": "Foam spray application for chemical neutralization"
+      }
+    },
+    {
+      "id": "RESP-027",
+      "unit_id": "FIRE-101-03",
+      "vehicle_number": "CG 07 FA 0103",
+      "type": "Rapid Intervention Vehicle (RIV)",
+      "category": "fire",
+      "call_sign": "AGNI-QUICK",
+      "status": "AVAILABLE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Kishore Sonwani",
+        "phone": "+91 98271 23427",
+        "license_no": "CG07-2018-009912",
+        "experience_years": 7,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Fireman Rajesh Netam",
+        "designation": "Rescue Specialist",
+        "phone": "+91 94252 11027"
+      },
+      "station": {
+        "name": "Sector 6 Central Fire Station",
+        "address": "Civic Centre, Sector 6, Bhilai, Chhattisgarh 490006",
+        "latitude": 21.1960,
+        "longitude": 81.3520
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1960,
+        "current_longitude": 81.3520,
+        "distance_from_center_km": 4.1,
+        "estimated_eta_mins": 5,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 97,
+        "last_ping": "10:04:09 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 100,
+        "stretcher_count": 1,
+        "trauma_kit_level": "Spreader/Cutter Combo",
+        "water_capacity_litres": 800,
+        "foam_capacity_litres": 100,
+        "breathing_apparatus_sets": 2
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-028",
+      "unit_id": "FIRE-101-04",
+      "vehicle_number": "CG 07 FA 0104",
+      "type": "Fire & Rescue Tender",
+      "category": "fire",
+      "call_sign": "AGNI-3",
+      "status": "AVAILABLE",
+      "zone": "OUTER_ZONE_12_20KM",
+      "driver": {
+        "name": "Lalit Deshmukh",
+        "phone": "+91 98271 23428",
+        "license_no": "CG07-2016-003348",
+        "experience_years": 9,
+        "shift": "Morning (06:00 - 14:00)"
+      },
+      "lead_crew": {
+        "name": "Leading Fireman T. P. Sahu",
+        "designation": "Leading Fireman",
+        "phone": "+91 94252 11028"
+      },
+      "station": {
+        "name": "Kumhari Industrial Fire Post",
+        "address": "Industrial Growth Centre, Kumhari, Chhattisgarh 490042",
+        "latitude": 21.2750,
+        "longitude": 81.5240
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2750,
+        "current_longitude": 81.5240,
+        "distance_from_center_km": 17.6,
+        "estimated_eta_mins": 19,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "GOOD",
+        "battery_pct": 92,
+        "last_ping": "10:03:52 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 100,
+        "stretcher_count": 2,
+        "trauma_kit_level": "Hydraulic Cutters & Extraction",
+        "water_capacity_litres": 5000,
+        "foam_capacity_litres": 800,
+        "breathing_apparatus_sets": 4
+      },
+      "active_mission": null
+    },
+    {
+      "id": "RESP-029",
+      "unit_id": "VOL-QRT-01",
+      "vehicle_number": "CG 07 VOL 001",
+      "type": "Trained Bystander First Responder",
+      "category": "volunteer",
+      "call_sign": "MITRA-1",
+      "status": "ON_SCENE",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Dr. Prateek Agrawal (Volunteer)",
+        "phone": "+91 98271 23429",
+        "license_no": "CG07-2022-VOL-011",
+        "experience_years": 3,
+        "shift": "Community Alert Standby"
+      },
+      "lead_crew": {
+        "name": "Dr. Prateek Agrawal",
+        "designation": "Certified CPR & Trauma Volunteer",
+        "phone": "+91 98271 23429"
+      },
+      "station": {
+        "name": "Supela Citizen Volunteer Node",
+        "address": "Near Priyadarshini Parisar, Supela, Bhilai",
+        "latitude": 21.2150,
+        "longitude": 81.3480
+      },
+      "live_telemetry": {
+        "current_latitude": 21.2135,
+        "current_longitude": 81.3530,
+        "distance_from_center_km": 1.4,
+        "estimated_eta_mins": 0,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "EXCELLENT",
+        "battery_pct": 89,
+        "last_ping": "10:04:31 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": true,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Civilian Bleed Control & Tourniquet",
+        "suction_machine": false,
+        "patient_monitor": false
+      },
+      "active_mission": {
+        "incident_id": "INC-204",
+        "incident_type": "Multi-Vehicle Collision",
+        "priority": "CRITICAL",
+        "target_location": "GE Road near Power House Flyover",
+        "started_at": "09:59:00 AM",
+        "action_note": "Administering tourniquet and CPR to victim #1"
+      }
+    },
+    {
+      "id": "RESP-030",
+      "unit_id": "VOL-QRT-02",
+      "vehicle_number": "CG 07 VOL 002",
+      "type": "Trained Bystander First Responder",
+      "category": "volunteer",
+      "call_sign": "MITRA-2",
+      "status": "OFF_DUTY",
+      "zone": "CORE_ZONE_0_5KM",
+      "driver": {
+        "name": "Sneha Dewangan (Volunteer)",
+        "phone": "+91 98271 23430",
+        "license_no": "CG07-2023-VOL-024",
+        "experience_years": 2,
+        "shift": "Off Duty (Available for Extreme SOS)"
+      },
+      "lead_crew": {
+        "name": "Sneha Dewangan",
+        "designation": "Certified Red Cross First-Aider",
+        "phone": "+91 98271 23430"
+      },
+      "station": {
+        "name": "Sector 4 Community Hub",
+        "address": "Sector 4, Bhilai, Chhattisgarh 490001",
+        "latitude": 21.1980,
+        "longitude": 81.3690
+      },
+      "live_telemetry": {
+        "current_latitude": 21.1980,
+        "current_longitude": 81.3690,
+        "distance_from_center_km": 2.2,
+        "estimated_eta_mins": 0,
+        "speed_kmh": 0,
+        "heading_degrees": 0,
+        "gps_signal": "GOOD",
+        "battery_pct": 76,
+        "last_ping": "09:15:00 AM"
+      },
+      "equipment": {
+        "ventilator": false,
+        "defibrillator_aed": false,
+        "oxygen_level_pct": 0,
+        "stretcher_count": 0,
+        "trauma_kit_level": "Civilian First Aid Kit",
+        "suction_machine": false,
+        "patient_monitor": false
+      },
+      "active_mission": null
+    }
+  ]
+}
