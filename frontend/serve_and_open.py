@@ -204,6 +204,8 @@ class RakshakLiveHandler(SimpleHTTPRequestHandler):
         elif len(parts) >= 1 and parts[0] in ('frontend', 'backend'):
             parts = parts[1:]
         
+        rel_path = os.path.join(*parts) if parts else ''
+        
         # Root '/' defaults to Command Center Control Room
         if not rel_path or rel_path in ('/', 'control-room.html', 'control-room', 'control', 'controlroom', 'command', 'dashboard'):
             return os.path.join(CURRENT_DIR, 'control-room-redesign.html')
