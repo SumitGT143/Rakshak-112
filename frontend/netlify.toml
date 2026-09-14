@@ -1,12 +1,12 @@
 [[redirects]]
   from = "/api/*"
-  to = "https://rakshak112-backend.onrender.com/api/:splat"
+  to = "https://rakshak-112-g4p0.onrender.com/api/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/events"
-  to = "https://rakshak112-backend.onrender.com/api/events"
+  to = "https://rakshak-112-g4p0.onrender.com/api/events"
   status = 200
   force = true
 
