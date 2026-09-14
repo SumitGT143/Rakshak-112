@@ -1,0 +1,2 @@
+# Rakshak 112 Python Backend
+# Pure Python 3.8+ Standard Library (No heavy binary dependencies needed)

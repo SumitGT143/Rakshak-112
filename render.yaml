@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: rakshak112-backend
+    env: python
+    buildCommand: ""
+    startCommand: "python frontend/serve_and_open.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: HOST
+        value: 0.0.0.0
