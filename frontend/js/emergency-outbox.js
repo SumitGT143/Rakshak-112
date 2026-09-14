@@ -16,7 +16,7 @@
         return '';
       }
     }
-    return 'https://rakshak-112-g4p0.onrender.com';
+    return 'https://rakshak-112-0yvb.onrender.com';
   }
 
   const DB_NAME = 'RakshakEmergencyDB';
