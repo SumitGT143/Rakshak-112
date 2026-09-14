@@ -105,23 +105,7 @@ loadHospitalsLocal();
 async function loadRespondersLocal() {
   const combined = [];
 
-  // 1. Load Raipur Responders Database
-  try {
-    const resRaipur = await fetch('raipur_responders_fleet_database.json');
-    if (resRaipur.ok) {
-      const d = await resRaipur.json();
-      const loaded = (d.responders || (Array.isArray(d) ? d : [])).map(r => ({
-        ...r,
-        district: r.district || 'Raipur',
-        sector: 'Raipur Metropolitan Sector'
-      }));
-      combined.push(...loaded);
-    }
-  } catch (e) {
-    console.warn('Could not load raipur_responders_fleet_database.json:', e);
-  }
-
-  // 2. Load Durg-Bhilai Responders Database
+  // 1. Load Durg-Bhilai Responders Database (Primary local control room sector)
   try {
     const resDurg = await fetch('durg_responders_fleet_database.json');
     if (resDurg.ok) {
@@ -135,6 +119,22 @@ async function loadRespondersLocal() {
     }
   } catch (e) {
     console.warn('Could not load durg_responders_fleet_database.json:', e);
+  }
+
+  // 2. Load Raipur Responders Database
+  try {
+    const resRaipur = await fetch('raipur_responders_fleet_database.json');
+    if (resRaipur.ok) {
+      const d = await resRaipur.json();
+      const loaded = (d.responders || (Array.isArray(d) ? d : [])).map(r => ({
+        ...r,
+        district: r.district || 'Raipur',
+        sector: 'Raipur Metropolitan Sector'
+      }));
+      combined.push(...loaded);
+    }
+  } catch (e) {
+    console.warn('Could not load raipur_responders_fleet_database.json:', e);
   }
 
   // 3. Fallback / supplementary load from /api/responders
@@ -2409,7 +2409,7 @@ function autoMatchAndDispatch(incident) {
     return true;
   });
 
-  // S4: score by distance + capabilities; cap 4 km
+  // S4: score by true distance + sector affinity + capabilities
   function scoreCandidate(r) {
     let d = 99;
     try {
@@ -2419,12 +2419,29 @@ function autoMatchAndDispatch(incident) {
         d = km(lat, lng, rLat, rLng);
       }
     } catch (e) { d = 99; }
-    if (d >= 4.0 || isNaN(d)) return Infinity;
+    if (isNaN(d)) d = 99;
+
+    const incLocStr = `${incident.location?.address || ''} ${incident.address || ''} ${incident.location?.landmark || ''}`.toLowerCase();
+    const isDurgBhilai = (lat >= 21.10 && lat <= 21.32 && lng >= 81.20 && lng <= 81.48) ||
+                         incLocStr.includes('bhilai') || incLocStr.includes('durg') || incLocStr.includes('supela') ||
+                         incLocStr.includes('nehru') || incLocStr.includes('sector') || incLocStr.includes('risali') ||
+                         incLocStr.includes('charoda') || incLocStr.includes('junwani');
+    
+    const rDistrict = (r.district || '').toLowerCase();
+    const isSameDistrict = isDurgBhilai ? (rDistrict.includes('durg') || (r.id && !r.id.includes('RAI')) || (r.unit_id && !r.unit_id.includes('RAI'))) : rDistrict.includes('raipur');
+
     let score = d * 10;
+    // Strongly prioritize local fleet units over cross-city units (Durg-Bhilai vs Raipur)
+    if (isSameDistrict) {
+      score -= 50;
+    } else {
+      score += 300;
+    }
+
     if (r.equipment) {
-      if (r.equipment.ventilator === true) score -= 3;
-      if ((r.equipment.stretcher_count || 0) >= 1) score -= 2;
-      if (incident.priority && incident.priority.code === 'L1' && (r.equipment.trauma_kit_level || '').toString().includes('Level-1')) score -= 4;
+      if (r.equipment.ventilator === true) score -= 5;
+      if ((r.equipment.stretcher_count || 0) >= 1) score -= 3;
+      if (incident.priority && incident.priority.code === 'L1' && (r.equipment.trauma_kit_level || '').toString().includes('Level-1')) score -= 5;
     }
     return score;
   }
@@ -2440,14 +2457,14 @@ function autoMatchAndDispatch(incident) {
   for (let i = 1; i < candidates.length; i++) {
     const c = candidates[i];
     const s = scoreCandidate(c);
-    if (s < bestScore || (s === bestScore && ((c.live_telemetry && c.live_telemetry.estimated_eta_mins || 99) < (best.live_telemetry && best.live_telemetry.estimated_eta_mins || 99)))) {
+    if (s < bestScore) {
       best = c;
       bestScore = s;
     }
   }
 
   // S6: double-check before mutation
-  const idx = respondersArr.findIndex(r => r && r.unit_id === best.unit_id && r.id === best.id);
+  const idx = respondersArr.findIndex(r => r && (r.unit_id === best.unit_id || r.id === best.id));
   if (idx === -1 || !respondersArr[idx] || respondersArr[idx].status !== 'AVAILABLE') {
     // Stale pointer / concurrent change — retry once
     return autoMatchAndDispatch(incident);
@@ -2457,13 +2474,48 @@ function autoMatchAndDispatch(incident) {
   const res = respondersArr[idx];
   res.status = 'EN_ROUTE_TO_INCIDENT';
   res.active_mission = { incident_id: incident.id, target_hospital_id: null, assigned_at: Date.now() };
+
+  const rLat = res.live_telemetry?.current_latitude || res.station?.latitude || DEFAULT_LAT;
+  const rLng = res.live_telemetry?.current_longitude || res.station?.longitude || DEFAULT_LON;
+  const dKm = km(lat, lng, rLat, rLng);
+  const etaMins = Math.max(2, Math.round(dKm / 0.65 + 2));
+
   if (res.live_telemetry) {
-    res.live_telemetry.distance_from_center_km = bestScore / 10;
-    res.live_telemetry.estimated_eta_mins = Math.round((bestScore / 10) / 0.55 + 3);
+    res.live_telemetry.distance_from_center_km = Number(dKm.toFixed(2));
+    res.live_telemetry.estimated_eta_mins = etaMins;
   }
+
+  const driverObj = (res.driver && typeof res.driver === 'object') ? res.driver : {};
+  const driverName = driverObj.name || (typeof res.driver === 'string' ? res.driver : (res.driver_name || 'Santosh Nishad'));
+  const driverPhone = driverObj.phone || res.phone || '+91 98271 23401';
+  const vNum = res.vehicle_number || res.vehicle_registration || res.unit_id || res.id;
+  const vType = res.type || res.vehicle_type || 'ALS Ambulance';
+
   incident.status = 'DISPATCHED';
-  incident.assigned_responder_id = res.id || res.unit_id;
   incident.stage = 'DISPATCHED';
+  incident.assigned_responder_id = res.id || res.unit_id;
+  incident.assignedAmbulance = res.unit_id || res.id;
+  incident.assignedAmbulanceType = vType;
+  incident.ambulanceEtaMinutes = etaMins;
+  incident.responderPhone = driverPhone;
+  incident.responderVehicle = vNum;
+
+  incident.assignedAmbulanceDetails = {
+    id: res.unit_id || res.id,
+    unit_id: res.unit_id || res.id,
+    driverName: driverName,
+    driverPhone: driverPhone,
+    driver: driverObj.name ? driverObj : { name: driverName, phone: driverPhone },
+    vehicleNumber: vNum,
+    type: vType,
+    etaMinutes: etaMins,
+    distanceKm: Number(dKm.toFixed(2)),
+    status: 'EN_ROUTE_TO_INCIDENT',
+    station: res.station || {}
+  };
+
+  incident.dispatch = incident.dispatch || {};
+  incident.dispatch.ambulance = incident.assignedAmbulanceDetails;
 
   // S9: assign hospital (best ranked, avoiding diverted / 0 ICU)
   try {
@@ -2509,8 +2561,37 @@ function assignResponder(incident, responder) {
   if (responder.active_mission && responder.active_mission.incident_id === incident.id) return true;
   responder.status = 'EN_ROUTE_TO_INCIDENT';
   responder.active_mission = { incident_id: incident.id, target_hospital_id: null, assigned_at: Date.now() };
+  
+  const driverObj = (responder.driver && typeof responder.driver === 'object') ? responder.driver : {};
+  const driverName = driverObj.name || (typeof responder.driver === 'string' ? responder.driver : (responder.driver_name || 'Assigned Driver'));
+  const driverPhone = driverObj.phone || responder.phone || '+91 98271 23401';
+  const vNum = responder.vehicle_number || responder.vehicle_registration || responder.unit_id || responder.id;
+  const vType = responder.type || responder.vehicle_type || 'ALS Ambulance';
+
   incident.status = 'DISPATCHED';
+  incident.stage = 'DISPATCHED';
   incident.assigned_responder_id = responder.id || responder.unit_id;
+  incident.assignedAmbulance = responder.unit_id || responder.id;
+  incident.assignedAmbulanceType = vType;
+  incident.responderPhone = driverPhone;
+  incident.responderVehicle = vNum;
+
+  incident.assignedAmbulanceDetails = {
+    id: responder.unit_id || responder.id,
+    unit_id: responder.unit_id || responder.id,
+    driverName: driverName,
+    driverPhone: driverPhone,
+    driver: driverObj.name ? driverObj : { name: driverName, phone: driverPhone },
+    vehicleNumber: vNum,
+    type: vType,
+    etaMinutes: 4,
+    distanceKm: 2.5,
+    status: 'EN_ROUTE_TO_INCIDENT',
+    station: responder.station || {}
+  };
+
+  incident.dispatch = incident.dispatch || {};
+  incident.dispatch.ambulance = incident.assignedAmbulanceDetails;
   return true;
 }
 

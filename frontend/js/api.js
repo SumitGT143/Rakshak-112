@@ -59,8 +59,12 @@ const reqStatus = h => {
 /* ---------- ranking engine ---------- */
 const ranks = () => {
   if (!selected) return [];
+  const sLat = (selected.location && selected.location.latitude != null) ? selected.location.latitude : (selected.lat != null ? selected.lat : 21.2100);
+  const sLng = (selected.location && selected.location.longitude != null) ? selected.location.longitude : (selected.lng != null ? selected.lng : 81.3650);
   return hospitals.map(h => {
-    const d = km(selected.location.latitude, selected.location.longitude, h.latitude, h.longitude);
+    const hLat = h.latitude ?? h.lat ?? 21.2100;
+    const hLng = h.longitude ?? h.lng ?? 81.3650;
+    const d = km(sLat, sLng, hLat, hLng);
     const l = h.live_status || {}, c = h.capabilities || {}, t = reqStatus(h);
     const verified = [c.trauma_level === 1, c.emergency_department === true, c.icu === true, c.emergency_surgery === true, c.orthopedics === true].filter(Boolean).length;
     const resources = [l.icu_beds_available > 0, l.emergency_beds_available > 0, l.operation_theatre_available === true, l.ventilators_available > 0].filter(Boolean).length;

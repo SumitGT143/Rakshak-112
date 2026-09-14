@@ -81,18 +81,6 @@ def load_initial_datasets():
     raipur_hosp = os.path.join(CURRENT_DIR, "RAIPUR HOSPITAL.JSON")
     durg_hosp = os.path.join(CURRENT_DIR, "DURG HOSPITAL.JSON")
 
-    if os.path.exists(raipur_hosp):
-        try:
-            with open(raipur_hosp, 'r', encoding='utf-8') as f:
-                d = json.load(f)
-                h_list = d.get('hospitals', [])
-                for h in h_list:
-                    if 'district' not in h:
-                        h['district'] = 'Raipur'
-                h_combined.extend(h_list)
-        except Exception as e:
-            print(f"Error loading {raipur_hosp}: {e}")
-
     if os.path.exists(durg_hosp):
         try:
             with open(durg_hosp, 'r', encoding='utf-8') as f:
@@ -105,24 +93,24 @@ def load_initial_datasets():
         except Exception as e:
             print(f"Error loading {durg_hosp}: {e}")
 
+    if os.path.exists(raipur_hosp):
+        try:
+            with open(raipur_hosp, 'r', encoding='utf-8') as f:
+                d = json.load(f)
+                h_list = d.get('hospitals', [])
+                for h in h_list:
+                    if 'district' not in h:
+                        h['district'] = 'Raipur'
+                h_combined.extend(h_list)
+        except Exception as e:
+            print(f"Error loading {raipur_hosp}: {e}")
+
     hospitals_db = h_combined
 
-    # Load Responders
+    # Load Responders (Durg-Bhilai first, then Raipur)
     r_combined = []
-    raipur_resp = os.path.join(CURRENT_DIR, "raipur_responders_fleet_database.json")
     durg_resp = os.path.join(CURRENT_DIR, "durg_responders_fleet_database.json")
-
-    if os.path.exists(raipur_resp):
-        try:
-            with open(raipur_resp, 'r', encoding='utf-8') as f:
-                d = json.load(f)
-                resp_list = d.get('responders', [])
-                for r in resp_list:
-                    if 'district' not in r:
-                        r['district'] = 'Raipur'
-                r_combined.extend(resp_list)
-        except Exception as e:
-            print(f"Error loading {raipur_resp}: {e}")
+    raipur_resp = os.path.join(CURRENT_DIR, "raipur_responders_fleet_database.json")
 
     if os.path.exists(durg_resp):
         try:
@@ -135,6 +123,18 @@ def load_initial_datasets():
                 r_combined.extend(resp_list)
         except Exception as e:
             print(f"Error loading {durg_resp}: {e}")
+
+    if os.path.exists(raipur_resp):
+        try:
+            with open(raipur_resp, 'r', encoding='utf-8') as f:
+                d = json.load(f)
+                resp_list = d.get('responders', [])
+                for r in resp_list:
+                    if 'district' not in r:
+                        r['district'] = 'Raipur'
+                r_combined.extend(resp_list)
+        except Exception as e:
+            print(f"Error loading {raipur_resp}: {e}")
 
     responders_db = r_combined
     

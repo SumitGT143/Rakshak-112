@@ -591,9 +591,13 @@
     // --- PANEL 2: AMBULANCE TRACKING & SMART ASSIGNMENT ---
     const ambData = inc.dispatch?.ambulance || inc.assignedAmbulanceDetails || {};
     const ambId = ambData.id || inc.assignedAmbulance || 'AMB-108-10';
-    const ambDriver = ambData.driverName || 'Santosh Nishad';
+    const ambDriver = ambData.driverName || 
+      (typeof ambData.driver === 'object' ? ambData.driver?.name : ambData.driver) ||
+      inc.assignedAmbulanceDetails?.driverName ||
+      (typeof inc.assignedAmbulanceDetails?.driver === 'object' ? inc.assignedAmbulanceDetails?.driver?.name : null) ||
+      'Santosh Nishad';
     const ambType = ambData.type || inc.assignedAmbulanceType || 'ALS';
-    const ambEta = Math.round(ambData.etaToSceneMinutes ?? inc.ambulanceEtaMinutes ?? 6);
+    const ambEta = Math.round(ambData.etaToSceneMinutes ?? ambData.etaMinutes ?? inc.ambulanceEtaMinutes ?? 6);
     const ambStatus = (ambData.status || inc.stage || 'EN ROUTE').replace(/_/g, ' ');
     const ambDistNum = ambData.distanceKm ?? 3.85;
     const ambDist = `${ambDistNum} km`;
