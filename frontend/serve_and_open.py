@@ -204,17 +204,20 @@ class RakshakLiveHandler(SimpleHTTPRequestHandler):
         elif len(parts) >= 1 and parts[0] in ('frontend', 'backend'):
             parts = parts[1:]
         
-        rel_path = os.path.join(*parts) if parts else ''
-        
-        # Friendly aliases for control room and citizen app
-        if rel_path.lower() in ('control-room.html', 'control-room', 'control', 'controlroom', 'command'):
+        # Root '/' defaults to Command Center Control Room
+        if not rel_path or rel_path in ('/', 'control-room.html', 'control-room', 'control', 'controlroom', 'command', 'dashboard'):
             return os.path.join(CURRENT_DIR, 'control-room-redesign.html')
-        if rel_path.lower() in ('app', 'sos-app.html', 'sos', 'bystander'):
+        
+        # Friendly aliases for citizen app
+        if rel_path.lower() in ('app', 'sos-app.html', 'sos', 'bystander', 'citizen', 'citizen.html'):
             return os.path.join(CURRENT_DIR, 'index.html')
 
         full_path = os.path.join(CURRENT_DIR, rel_path)
 
         if os.path.isdir(full_path):
+            cr_file = os.path.join(full_path, 'control-room-redesign.html')
+            if os.path.exists(cr_file):
+                return cr_file
             index_file = os.path.join(full_path, 'index.html')
             if os.path.exists(index_file):
                 return index_file

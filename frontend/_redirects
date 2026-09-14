@@ -1,4 +1,8 @@
-# Netlify API Proxy Configuration to Render Backend
-# Replace 'https://rakshak112-backend.onrender.com' with your actual Render service URL after deploying to Render.
+# Netlify Routing & API Proxy Configuration
+/  /control-room-redesign.html  200!
+/control-room  /control-room-redesign.html  200!
+/citizen  /index.html  200!
+
+# Backend API proxy to Render
 /api/*  https://rakshak112-backend.onrender.com/api/:splat  200!
 /events https://rakshak112-backend.onrender.com/api/events  200!
