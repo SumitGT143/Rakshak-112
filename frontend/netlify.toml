@@ -9,3 +9,8 @@
   to = "https://rakshak112-backend.onrender.com/api/events"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
