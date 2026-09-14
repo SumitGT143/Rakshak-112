@@ -8,6 +8,17 @@
 (function (global) {
   'use strict';
 
+  function getBackendBaseUrl() {
+    if (global.RAKSHAK_BACKEND_URL) return global.RAKSHAK_BACKEND_URL;
+    if (typeof window !== 'undefined' && window.location) {
+      const host = window.location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1' || host.endsWith('onrender.com')) {
+        return '';
+      }
+    }
+    return 'https://rakshak-112-g4p0.onrender.com';
+  }
+
   const DB_NAME = 'RakshakEmergencyDB';
   const DB_VERSION = 1;
   const STORE_OUTBOX = 'outbox';
@@ -339,8 +350,9 @@
           try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 8000);
+            const base = getBackendBaseUrl();
 
-            const response = await fetch('/api/sos', {
+            const response = await fetch(base + '/api/sos', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(item.payload),
@@ -403,7 +415,8 @@
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 4000);
-        const res = await fetch('/api/status', { signal: controller.signal });
+        const base = getBackendBaseUrl();
+        const res = await fetch(base + '/api/status', { signal: controller.signal });
         clearTimeout(timeoutId);
         if (res.ok) {
           lastSuccessfulPing = Date.now();

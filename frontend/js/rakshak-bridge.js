@@ -7,6 +7,17 @@
 (function(window) {
   'use strict';
 
+  function getBackendBaseUrl() {
+    if (window.RAKSHAK_BACKEND_URL) return window.RAKSHAK_BACKEND_URL;
+    if (typeof window !== 'undefined' && window.location) {
+      const host = window.location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1' || host.endsWith('onrender.com')) {
+        return '';
+      }
+    }
+    return 'https://rakshak-112-g4p0.onrender.com';
+  }
+
   const RakshakBridge = {
     // SSE stream for real-time updates from backend
     _es: null,
@@ -14,10 +25,11 @@
 
     init: function(callbacks) {
       this._callbacks = callbacks || {};
+      const base = getBackendBaseUrl();
       // Use backend SSE — NO BroadcastChannel, NO LocalStorage
       try {
         if (typeof EventSource !== 'undefined') {
-          this._es = new EventSource('/api/events');
+          this._es = new EventSource(base + '/api/events');
           this._es.addEventListener('ready', () => {
             console.log('✅ [RakshakBridge] SSE connected to backend /api/events');
           });
@@ -56,10 +68,11 @@
       } catch (err) { console.warn('SSE parse error in bridge:', err); }
     },
 
-    // Send SOS to backend via REST — no browser-to-browser
+    // Send SOS to backend via REST — direct to Render if on Netlify
     sendSOS: async function(sosData) {
       try {
-        const res = await fetch('/api/sos', {
+        const base = getBackendBaseUrl();
+        const res = await fetch(base + '/api/sos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(sosData)
