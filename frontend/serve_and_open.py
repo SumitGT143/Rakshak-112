@@ -384,6 +384,27 @@ class RakshakLiveHandler(SimpleHTTPRequestHandler):
         if '/status' in path:
             return self._handle_incident_update()
 
+        # 0. POST /api/reset (Reset all active incidents, emergency queue, and deployed responders to 0)
+        if path in ('/api/reset', '/api/incidents/reset', '/reset'):
+            global incidents_db
+            incidents_db.clear()
+            if hasattr(resource_manager, 'active_reservations'):
+                resource_manager.active_reservations.clear()
+            if hasattr(resource_manager, 'reservations'):
+                resource_manager.reservations.clear()
+            for r in responders_db:
+                if r.get('status') in ('EN_ROUTE_TO_INCIDENT', 'ON_SCENE', 'DISPATCHED'):
+                    r['status'] = 'AVAILABLE'
+                    r.pop('assignedIncidentId', None)
+            broadcast_sse('incident.reset', {"status": "cleared", "timestamp": time.time()})
+            broadcast_sse('reset', {"status": "cleared", "timestamp": time.time()})
+            print("[POST /api/reset] All incidents and active responders reset to 0.")
+            return self.send_json({
+                "success": True,
+                "message": "All incidents, emergency queue, and active responders reset to 0",
+                "active_incidents": 0
+            })
+
         # 1. POST /api/sos (Bystander App triggers SOS Beacon -> Dynamic Auto-Dispatch)
         if path == '/api/sos' or path == '/api/incidents' or path == '/api/incidents/sos':
             inc_id = body.get('id') or body.get('incidentId') or f"R112-{int(time.time() % 1000 + 100):03d}"

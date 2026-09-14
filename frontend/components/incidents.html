@@ -40,9 +40,14 @@
 
     <!-- Incident queue -->
     <div class="card queue-panel">
-      <div class="card-header">
-        <h2>INCIDENT QUEUE</h2>
-        <span class="card-label" id="count">0 CASES</span>
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <h2>INCIDENT QUEUE</h2>
+          <span class="card-label" id="count">0 CASES</span>
+        </div>
+        <button onclick="resetAllIncidents()" title="Reset active incidents & queue to 0" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.5);color:#fca5a5;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:4px;cursor:pointer;">
+          🔄 Reset 0
+        </button>
       </div>
       <div class="queue-list" id="list"></div>
     </div>

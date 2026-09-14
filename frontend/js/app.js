@@ -3925,6 +3925,58 @@ function activateGreenCorridor() {
   alert('🟢 Green Corridor Activated!\nTraffic signals overridden to priority green wave. Hospital trauma bay notified.');
 }
 
+// Reset all incidents and active responders back to 0
+async function resetAllIncidents() {
+  if (!confirm('Are you sure you want to reset all active incidents, emergency queue, and deployed responders back to 0?')) {
+    return;
+  }
+  
+  try {
+    const base = typeof getBackendBaseUrl === 'function' ? getBackendBaseUrl() : '';
+    await fetch(base + '/api/reset', { method: 'POST' });
+  } catch (e) {
+    console.warn('Backend reset call:', e);
+  }
+
+  incidents = [];
+  selected = null;
+  window.selected = null;
+  window.incidents = [];
+
+  if ($('total')) $('total').textContent = '0';
+  if ($('critical')) $('critical').textContent = '0';
+  if ($('active')) $('active').textContent = '0';
+  if ($('last')) $('last').textContent = '—';
+  if ($('count')) $('count').textContent = '0 CASES';
+  if ($('list')) $('list').innerHTML = '<div class="empty" style="min-height:auto">No emergencies in queue.</div>';
+
+  map();
+  if (typeof window.renderLiveMonitoringUI === 'function') {
+    window.renderLiveMonitoringUI();
+  }
+  if (typeof window.renderResponders === 'function') {
+    window.renderResponders();
+  }
+}
+window.resetAllIncidents = resetAllIncidents;
+
+window.onIncidentReset = function() {
+  incidents = [];
+  selected = null;
+  window.selected = null;
+  window.incidents = [];
+  if ($('total')) $('total').textContent = '0';
+  if ($('critical')) $('critical').textContent = '0';
+  if ($('active')) $('active').textContent = '0';
+  if ($('last')) $('last').textContent = '—';
+  if ($('count')) $('count').textContent = '0 CASES';
+  if ($('list')) $('list').innerHTML = '<div class="empty" style="min-height:auto">No emergencies in queue.</div>';
+  map();
+  if (typeof window.renderLiveMonitoringUI === 'function') {
+    window.renderLiveMonitoringUI();
+  }
+};
+
 // Initialize Rakshak Two-Way Emergency Bridge
 if (typeof RakshakBridge !== 'undefined') {
   RakshakBridge.init({
@@ -3935,6 +3987,9 @@ if (typeof RakshakBridge !== 'undefined') {
     onStatusUpdate: function(update) {
       console.log('📝 [Control Room] STATUS UPDATE FROM BYSTANDER APP:', update);
       handleIncomingIncident(update, 'bridge_update');
+    },
+    onReset: function() {
+      if (typeof window.onIncidentReset === 'function') window.onIncidentReset();
     }
   });
 }

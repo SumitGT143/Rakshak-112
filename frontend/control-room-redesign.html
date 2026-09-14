@@ -40,9 +40,14 @@
     <header class="topbar">
       <h1>COMMAND CENTER</h1>
       <div class="topbar-right">
-        <div class="sys-health">
-          <span class="sys-live" id="sseBadge"><span class="sys-dot"></span>SSE <span id="conn">CONNECTING...</span></span>
-          <span class="sys-live" id="apiBadge"><span class="sys-dot"></span>API <span id="apiConn">CONNECTING...</span></span>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="btn-reset-dashboard" onclick="resetAllIncidents()" title="Reset all active incidents, emergency queue, and deployed responders back to 0" style="background:rgba(239,68,68,0.15);border:1.5px solid #ef4444;color:#fca5a5;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;">
+            <span>🔄</span> RESET ALL (0)
+          </button>
+          <div class="sys-health">
+            <span class="sys-live" id="sseBadge"><span class="sys-dot"></span>SSE <span id="conn">CONNECTING...</span></span>
+            <span class="sys-live" id="apiBadge"><span class="sys-dot"></span>API <span id="apiConn">CONNECTING...</span></span>
+          </div>
         </div>
       </div>
     </header>
@@ -98,9 +103,14 @@
 
           <!-- Incident queue -->
           <div class="card queue-panel">
-            <div class="card-header">
-              <h2>INCIDENT QUEUE</h2>
-              <span class="card-label" id="count">0 CASES</span>
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <h2>INCIDENT QUEUE</h2>
+                <span class="card-label" id="count">0 CASES</span>
+              </div>
+              <button onclick="resetAllIncidents()" title="Reset active incidents & queue to 0" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.5);color:#fca5a5;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:4px;cursor:pointer;">
+                🔄 Reset 0
+              </button>
             </div>
             <div class="queue-list" id="list"></div>
           </div>

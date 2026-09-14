@@ -45,6 +45,8 @@
           this._es.addEventListener('anomaly:movement', e => this._handle('anomaly:movement', e));
           this._es.addEventListener('dispatch:reoptimized', e => this._handle('dispatch:reoptimized', e));
           this._es.addEventListener('resource:update', e => this._handle('resource:update', e));
+          this._es.addEventListener('incident.reset', e => this._handle('incident.reset', e));
+          this._es.addEventListener('reset', e => this._handle('reset', e));
           this._es.onerror = () => console.warn('⚠ [RakshakBridge] SSE error — reconnecting...');
         }
       } catch (e) {
@@ -58,7 +60,10 @@
         if (typeof window.onLiveMonitoringEvent === 'function') {
           window.onLiveMonitoringEvent(type, data);
         }
-        if (type === 'incident' || type === 'new_sos') {
+        if (type === 'incident.reset' || type === 'reset') {
+          if (typeof this._callbacks.onReset === 'function') this._callbacks.onReset(data);
+          if (typeof window.onIncidentReset === 'function') window.onIncidentReset(data);
+        } else if (type === 'incident' || type === 'new_sos') {
           if (typeof this._callbacks.onSOSReceived === 'function') this._callbacks.onSOSReceived(data);
         } else if (type === 'incident:update' || type === 'hospital:reassigned' || type === 'dispatch:reoptimized') {
           if (typeof this._callbacks.onStatusUpdate === 'function') this._callbacks.onStatusUpdate(data);
