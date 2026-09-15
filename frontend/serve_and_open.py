@@ -783,9 +783,16 @@ class RakshakLiveHandler(SimpleHTTPRequestHandler):
 
         status_val = target.get('status', '')
         if status_val == 'CANCELLED':
+            target['state'] = 'CANCELLED'
             resource_manager.release_incident_reservations(inc_id)
+            for r in responders_db:
+                if r.get('assignedIncidentId') == inc_id or r.get('incidentId') == inc_id:
+                    r['status'] = 'AVAILABLE'
+                    r.pop('assignedIncidentId', None)
+                    r.pop('incidentId', None)
             broadcast_sse('incident.cancelled', target)
         elif status_val in ('CLS', 'RESOLVED'):
+            target['state'] = 'RESOLVED'
             resource_manager.release_incident_reservations(inc_id)
             broadcast_sse('incident.resolved', target)
         

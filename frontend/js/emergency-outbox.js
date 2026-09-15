@@ -432,6 +432,21 @@
       }
     },
 
+    cancelIncident: async function (incidentId) {
+      if (!incidentId) return;
+      try {
+        if (dbInstance) {
+          const tx = dbInstance.transaction([STORE_OUTBOX], 'readwrite');
+          const store = tx.objectStore(STORE_OUTBOX);
+          store.delete(incidentId);
+        }
+      } catch (e) {}
+      try {
+        const items = getFallbackOutbox().filter(i => i.incidentId !== incidentId);
+        saveFallbackOutbox(items);
+      } catch (e) {}
+    },
+
     notifyOutboxChange: function (item, changeType) {
       outboxListeners.forEach(fn => {
         try { fn(item, changeType); } catch (e) { console.error(e); }

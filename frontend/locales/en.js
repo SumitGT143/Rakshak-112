@@ -81,7 +81,10 @@
     "closeAlertBtn": "I'm safe — close alert",
     "smartAssignment": "SMART DISPATCH REASONING",
     "responseTimeline": "EMERGENCY RESPONSE TIMELINE",
-    "liveFeed": "REAL-TIME EVENT FEED"
+    "liveFeed": "REAL-TIME EVENT FEED",
+    "cancelSosHeader": "Accidental Call or Situation Resolved?",
+    "cancelSosSub": "If you no longer need emergency assistance or this SOS was triggered accidentally, cancel this emergency response to notify the 112 Command Center and stand down responders.",
+    "cancelSosBtn": "Cancel Emergency Response"
   },
   "sos": {
     "title": "Vital Questions",

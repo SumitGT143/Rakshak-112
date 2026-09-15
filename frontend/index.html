@@ -2881,7 +2881,12 @@
               <span class="live-dot"></span>
               <span id="monitorIncidentCode">EMERGENCY ACTIVE</span>
             </div>
-            <div class="time-ticker" id="monitorFreshnessTicker">Last updated: Just now</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="time-ticker" id="monitorFreshnessTicker">Last updated: Just now</div>
+              <button type="button" class="btn" onclick="promptCancelSos()" style="min-height:24px;height:24px;padding:0 9px;font-size:10.5px;font-weight:800;border-radius:12px;background:rgba(234,67,53,0.12);color:var(--crimson);border:1px solid rgba(234,67,53,0.3);cursor:pointer;display:inline-flex;align-items:center;gap:4px;" title="Cancel Emergency SOS Call">
+                <span>✕</span> <span>Cancel SOS</span>
+              </button>
+            </div>
           </div>
 
           <!-- 1. LIVE INCIDENT MAP -->
@@ -3167,6 +3172,21 @@
             <h3 style="margin-top:6px" data-i18n="monitor.noResponseAlertTitle">Alert sent as an unconfirmed critical emergency</h3>
             <div class="sub" style="margin-top:5px" data-i18n="monitor.noResponseAlertDesc">If you are safe and this was accidental, close the alert so dispatch can update the response.</div>
             <button class="btn" style="width:100%;margin-top:12px" onclick="closeNoResponseAlert()" data-i18n="monitor.closeAlertBtn">I'm safe — close alert</button>
+          </div>
+
+          <!-- 7. CANCEL SOS EMERGENCY CALL CARD -->
+          <div class="card" id="monitorCancelSosCard" style="margin-top:14px;padding:16px;border-radius:16px;background:#fff8f8;border:1.5px solid rgba(234,67,53,0.25);text-align:center;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;color:var(--crimson);font-weight:800;font-size:13px;margin-bottom:6px;">
+              <span>⚠️</span>
+              <span>Cancel SOS Emergency Call</span>
+            </div>
+            <div style="font-size:11.5px;color:#64748b;line-height:1.45;margin-bottom:12px;">
+              If you no longer need emergency assistance or this SOS was triggered accidentally, you can cancel this emergency response to notify the 112 Command Center and stand down responders.
+            </div>
+            <button type="button" class="btn" onclick="promptCancelSos()" style="width:100%;background:#ffffff;border:1.5px solid var(--crimson);color:var(--crimson);font-weight:800;font-size:13px;padding:11px 16px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(234,67,53,0.1);transition:all 0.2s ease;">
+              <span>✕</span>
+              <span>Cancel Emergency Response</span>
+            </button>
           </div>
         </div>
       </section>
@@ -4434,8 +4454,34 @@
           <button class="btn" onclick="closeSOS()" data-i18n="type.cancelBtn">Cancel</button>
           <button class="btn primary" onclick="submitSOS()" data-i18n="type.continueBtn">Continue</button>
         </div>
+      </div>
+    </div>
 
-        <div class="sub" style="text-align:center;margin-top:10px" data-i18n="type.submittingHint">Submitting this request will start the emergency response process.</div>
+    <!-- CANCEL SOS EMERGENCY CONFIRMATION MODAL -->
+    <div class="modal" id="cancelSosConfirmModal" onclick="if(event.target===this)closeCancelSosModal()">
+      <div class="sheet">
+        <div class="handle"></div>
+        <div class="row between">
+          <div>
+            <div class="sub" style="color:var(--crimson);font-weight:800;letter-spacing:0.06em;">EMERGENCY CANCELLATION</div>
+            <h2 style="margin-top:2px;">Cancel SOS Emergency Call?</h2>
+          </div>
+          <button class="icon-btn" onclick="closeCancelSosModal()">✕</button>
+        </div>
+
+        <p style="font-size:13px;line-height:1.5;color:var(--ink);margin:14px 0 10px;">
+          Do you want to cancel this emergency SOS call? Once cancelled, active emergency responders will be stood down and this call will be closed.
+        </p>
+
+        <div style="background:#fff5f5;border:1px solid rgba(229,57,53,0.3);padding:10px 12px;border-radius:12px;margin-top:6px;font-size:12px;color:var(--crimson);font-weight:600;display:flex;align-items:flex-start;gap:8px;line-height:1.4;">
+          <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
+          <span>The monitoring screen will reset to <b>No Active SOS Emergencies</b> immediately.</span>
+        </div>
+
+        <div class="actions" style="margin-top:18px;display:flex;gap:10px;">
+          <button type="button" class="btn" style="flex:1;" onclick="closeCancelSosModal()">No, Keep Active</button>
+          <button type="button" class="btn primary" id="confirmCancelSosBtn" style="flex:1;background:var(--crimson);border-color:var(--crimson);color:#fff;font-weight:800;" onclick="confirmCancelSos()">Yes, Cancel SOS</button>
+        </div>
       </div>
     </div>
 
@@ -5115,20 +5161,14 @@
       });
 
       activeIncidentId = queuedItem.incidentId;
+      initialBeaconSent = true;
       startSearchingUnitsCountdown();
       initBystanderMonitorMap(lat, lng);
 
       // Inform user that emergency is securely captured locally
-      toast('🚨 Emergency detected · Saved locally on device');
+      toast('🚨 Emergency detected · Alerting 112 Control Room');
 
-      // Check if already ACKed or if waiting for connection
-      if (queuedItem.serverAck) {
-        onServerAckReceived(queuedItem.incidentId);
-      }
-    }
-
-    function onServerAckReceived(incidentId) {
-      initialBeaconSent = true;
+      // Immediately show questions prompt
       const roleModal = document.getElementById('roleModal');
       if (roleModal) {
         roleModal.classList.remove('open');
@@ -5136,6 +5176,10 @@
         roleModal.classList.add('open');
         startRoleCountdown();
       }
+    }
+
+    function onServerAckReceived(incidentId) {
+      initialBeaconSent = true;
       toast('✓ 112 Control Room acknowledged: ' + incidentId);
     }
 
@@ -6551,9 +6595,28 @@
     };
 
     function updateMonitorFromIncident(incident) {
+      if (!incident) return;
+      if (!activeIncidentId) return;
+
+      const state = incident.state || incident.status || '';
+      if (state === 'CANCELLED') {
+        activeIncidentId = null;
+        initialBeaconSent = false;
+        currentIncidentObj = null;
+        const empty = document.getElementById('monitorEmpty');
+        const active = document.getElementById('monitorActive');
+        const liveBadge = document.getElementById('monitorLiveBadge');
+        const homeBanner = document.getElementById('homeActiveSosEtaBanner');
+        if (empty) empty.style.display = 'block';
+        if (active) active.style.display = 'none';
+        if (liveBadge) liveBadge.style.display = 'none';
+        if (homeBanner) homeBanner.style.display = 'none';
+        resetBystanderMap();
+        return;
+      }
+
       if (incident && incident.assessment) { renderVictimAssessmentInMonitor(incident.assessment); }
 
-      if (!incident) return;
       currentIncidentObj = incident;
       lastIncidentUpdateTime = Date.now();
       startMonitorTicker();
@@ -6567,7 +6630,6 @@
       if (active) active.style.display = 'block';
       if (liveBadge) liveBadge.style.display = '';
 
-      const state = incident.state || incident.status || '';
       const label = document.getElementById('monitorMapLabel');
       if (label) {
         const lat = incident.lat ?? incident.location?.latitude;
@@ -7284,72 +7346,108 @@
       }
     }
 
-    async function cancelResponse() {
-      if (!activeIncidentId) {
-        show('home');
-        return;
-      }
-
-      if (!window.confirm(t('toasts.confirmCancelResponse'))) {
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `/api/incidents/${activeIncidentId}/status`,
-          {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              status: 'CANCELLED',
-              note: 'Cancelled by bystander via app'
-            })
-          }
-        );
-
-        if (response.ok) {
-          activeIncidentId = null;
-          initialBeaconSent = false;
-          currentIncidentObj = null;
-          noResponseEscalated = false;
-          isSearchingForUnits = false;
-          if (searchingUnitsTimer) {
-            clearTimeout(searchingUnitsTimer);
-            searchingUnitsTimer = null;
-          }
-          if (monitorTickerInterval) {
-            clearInterval(monitorTickerInterval);
-            monitorTickerInterval = null;
-          }
-          currentAmbulanceEtaSeconds = null;
-          initialAmbulanceEtaSeconds = null;
-          const empty = document.getElementById('monitorEmpty');
-          const active = document.getElementById('monitorActive');
-          const liveBadge = document.getElementById('monitorLiveBadge');
-          const homeBanner = document.getElementById('homeActiveSosEtaBanner');
-          if (empty) empty.style.display = 'block';
-          if (active) active.style.display = 'none';
-          if (liveBadge) liveBadge.style.display = 'none';
-          if (homeBanner) homeBanner.style.display = 'none';
-          resetBystanderMap();
-          show('home');
-          toast(t('toasts.responseCancelled'));
-        } else {
-          const data = await response.json();
-          toast(data.error || t('toasts.couldNotCancel'));
-          activeIncidentId = null;
-          initialBeaconSent = false;
-          currentIncidentObj = null;
-          isSearchingForUnits = false;
-          const homeBannerErr = document.getElementById('homeActiveSosEtaBanner');
-          if (homeBannerErr) homeBannerErr.style.display = 'none';
-          resetBystanderMap();
-          show('home');
+    function promptCancelSos() {
+      const modal = document.getElementById('cancelSosConfirmModal');
+      if (modal) {
+        modal.classList.add('open');
+      } else {
+        const confirmMsg = (typeof t === 'function') 
+          ? t('toasts.confirmCancelResponse') 
+          : 'Do you want to cancel this emergency SOS call?';
+        if (window.confirm(confirmMsg)) {
+          confirmCancelSos();
         }
-      } catch (error) {
-        console.error(error);
-        toast(t('toasts.connectionErrorCall112'));
+      }
+    }
+
+    function closeCancelSosModal() {
+      const modal = document.getElementById('cancelSosConfirmModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    async function confirmCancelSos() {
+      closeCancelSosModal();
+      await cancelResponse({ confirmed: true, stayInMonitoring: true });
+    }
+
+    async function cancelResponse(options = {}) {
+      const confirmed = options.confirmed === true;
+      const stayInMonitoring = options.stayInMonitoring !== false;
+      const targetIncId = activeIncidentId || currentIncidentObj?.id;
+
+      if (!confirmed) {
+        promptCancelSos();
+        return;
+      }
+
+      // Immediately clear state for snappy responsiveness
+      const incToCancel = targetIncId;
+      activeIncidentId = null;
+      initialBeaconSent = false;
+      currentIncidentObj = null;
+      noResponseEscalated = false;
+      isSearchingForUnits = false;
+
+      if (searchingUnitsTimer) {
+        clearTimeout(searchingUnitsTimer);
+        searchingUnitsTimer = null;
+      }
+      if (monitorTickerInterval) {
+        clearInterval(monitorTickerInterval);
+        monitorTickerInterval = null;
+      }
+      currentAmbulanceEtaSeconds = null;
+      initialAmbulanceEtaSeconds = null;
+
+      // Cancel outbox item if present
+      if (window.EmergencyOutbox && typeof window.EmergencyOutbox.cancelIncident === 'function' && incToCancel) {
+        try {
+          window.EmergencyOutbox.cancelIncident(incToCancel);
+        } catch (e) {
+          console.warn('Outbox cancel incident error:', e);
+        }
+      }
+
+      // Transition Monitoring UI to No Active SOS State
+      const empty = document.getElementById('monitorEmpty');
+      const active = document.getElementById('monitorActive');
+      const liveBadge = document.getElementById('monitorLiveBadge');
+      const homeBanner = document.getElementById('homeActiveSosEtaBanner');
+      if (empty) empty.style.display = 'block';
+      if (active) active.style.display = 'none';
+      if (liveBadge) liveBadge.style.display = 'none';
+      if (homeBanner) homeBanner.style.display = 'none';
+      resetBystanderMap();
+
+      if (stayInMonitoring) {
+        show('monitor');
+      } else {
         show('home');
+      }
+
+      toast(typeof t === 'function' ? t('toasts.responseCancelled') : 'Emergency SOS call has been cancelled.');
+
+      // Transmit cancellation to backend server
+      if (incToCancel) {
+        try {
+          const response = await fetch(
+            `/api/incidents/${incToCancel}/status`,
+            {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                status: 'CANCELLED',
+                state: 'CANCELLED',
+                note: 'Cancelled by bystander via monitoring section'
+              })
+            }
+          );
+          if (!response.ok) {
+            console.warn('Backend status cancel response not OK:', response.status);
+          }
+        } catch (error) {
+          console.warn('Could not contact backend to cancel incident:', error);
+        }
       }
     }
 
